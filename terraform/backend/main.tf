@@ -12,7 +12,7 @@ provider "aws" {
 }
 
 resource "aws_s3_bucket" "s3_backend_bucket" {
-  bucket_prefix =  = "${var.project_name}-tf-backend-"
+  bucket_prefix = "${var.project_name}-tf-backend-"
 }
 
 resource "aws_s3_bucket_versioning" "s3_backend_bucket_versioning" {
