@@ -1,3 +1,5 @@
+# This project is solely for the purpose of creating the backend resources for the environment.
+
 terraform {
   required_providers {
     aws = {
@@ -8,7 +10,7 @@ terraform {
 }
 
 provider "aws" {
-  region = "sa-east-1"
+  region = "us-east-1"
 }
 
 resource "aws_s3_bucket" "s3_backend_bucket" {
