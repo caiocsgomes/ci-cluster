@@ -29,12 +29,16 @@ jobs:
       uses: actions/checkout@v3
       with:
         submodules: 'true'
+    - name: Arrange environment files
+      run: |
+        cp terraform/environments/prod/terraform.tfvars terraform/
+        cp terraform/environments/prod/provider.tf terraform/
     - name: terraform init
       run: terraform init
-      working-directory: terraform/environments/prod
+      working-directory: terraform
     - name: terraform plan
       run: terraform plan
-      working-directory: terraform/environments/prod
+      working-directory: terraform
 
   
   execute-plan:
@@ -54,6 +58,10 @@ jobs:
       uses: actions/checkout@v3
       with:
         submodules: 'true'
+    - name: Arrange environment files
+      run: |
+        cp terraform/environments/prod/terraform.tfvars terraform/
+        cp terraform/environments/prod/provider.tf terraform/
     - name: terraform init
       run: terraform init
       working-directory: terraform/environments/prod
