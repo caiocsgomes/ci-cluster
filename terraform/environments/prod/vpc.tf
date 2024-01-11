@@ -1,7 +1,8 @@
+# https://docs.aws.amazon.com/eks/latest/userguide/network_reqs.html
 module "vpc" {
-  source = "terraform-aws-modules/vpc/aws"
+  source = "github.com/terraform-aws-modules/terraform-aws-vpc"
 
-  name = "k8s-github-actions-vpc"
+  name = "k8s-playground"
   cidr = "10.0.0.0/16"
 
   azs             = ["us-east-1a", "us-east-1b", "us-east-1c"]
