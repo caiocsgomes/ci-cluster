@@ -1,11 +1,17 @@
+## Project wide variables
 variable "project_name" {
   default = "k8s-playground"
 }
-variable "vpc_cidr" {
-  type = string
+variable "region" {
+  default = "us-east-1"
 }
 variable "availability_zones" {
   type = list(string)
+}
+
+## VPC variables
+variable "vpc_cidr" {
+  type = string
 }
 variable "private_subnets" {
   type = list(string)
@@ -21,4 +27,21 @@ variable "enable_vpn_gateway" {
 }
 variable "vpc_tags" {
   type = map(string)
+}
+
+## EKS variables
+
+variable "instance_types" {
+  type    = list(string)
+  default = ["t2.medium"]
+}
+variable "disk_size" {
+  type    = number
+  default = 50
+}
+variable "eks_tags" {
+  type = map(string)
+  default = {
+    Name = "k8s-playground"
+  }
 }
