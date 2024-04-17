@@ -1,3 +1,16 @@
+locals {
+  name            = "ex-${replace(basename(path.cwd), "_", "-")}"
+  cluster_version = "1.27"
+  region          = var.region
+
+  vpc_cidr = var.vpc_cidr
+  azs      = var.availability_zones
+  tags     = var.eks_tags
+}
+
+data "aws_caller_identity" "current" {}
+data "aws_availability_zones" "available" {}
+
 provider "kubernetes" {
   host                   = module.eks.cluster_endpoint
   cluster_ca_certificate = base64decode(module.eks.cluster_certificate_authority_data)
@@ -10,21 +23,8 @@ provider "kubernetes" {
   }
 }
 
-data "aws_caller_identity" "current" {}
-data "aws_availability_zones" "available" {}
-
-locals {
-  name            = "ex-${replace(basename(path.cwd), "_", "-")}"
-  cluster_version = "1.27"
-  region          = var.region
-
-  vpc_cidr = var.vpc_cidr
-  azs      = var.availability_zones
-  tags     = var.eks_tags
-}
-
 module "eks" {
-  source = "github.com/terraform-aws-modules/terraform-aws-eks"
+  source = "github.com/terraform-aws-modules/terraform-aws-eks?ref=v20.8.5"
 
   cluster_name                   = var.project_name
   cluster_version                = local.cluster_version
