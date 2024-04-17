@@ -7,10 +7,10 @@ terraform {
   }
 
   backend "s3" {
-    bucket         = "k8s-github-actions-tf-backend-20240110055046188100000001"
+    bucket         = "aws-eks-cluster-tf-backend-20240417210225955700000001"
     key            = "terraform.tfstate"
     region         = "us-east-1"
-    dynamodb_table = "k8s-github-actions-tf-backend"
+    dynamodb_table = "aws-eks-cluster-tf-backend"
     encrypt        = true
   }
 }
