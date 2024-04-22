@@ -31,7 +31,7 @@ jobs:
     - name: terraform plan
       run: | 
         terraform plan -out=plan.tmp
-        terraform show plan.tmp > ${GITHUB_WORKSPACE}/plan.out
+        terraform show -no-color plan.tmp > ${GITHUB_WORKSPACE}/plan.out
       working-directory: terraform/environments/prod
       id: terraform-plan
     - name: update PR with plan
