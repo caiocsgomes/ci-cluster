@@ -1,6 +1,6 @@
 ## Project wide variables
 variable "project_name" {
-  default = "k8s-playground"
+  default = "aws-eks-cluster"
 }
 variable "region" {
   default = "us-east-1"
@@ -42,6 +42,6 @@ variable "disk_size" {
 variable "eks_tags" {
   type = map(string)
   default = {
-    Name = "k8s-playground"
+    Name = "aws-eks-cluster"
   }
 }

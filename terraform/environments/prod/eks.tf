@@ -8,6 +8,7 @@ locals {
   tags     = var.eks_tags
 }
 
+# Data about current AWS account
 data "aws_caller_identity" "current" {}
 data "aws_availability_zones" "available" {}
 
@@ -281,8 +282,7 @@ module "eks" {
 ################################################################################
 
 module "vpc_cni_irsa" {
-  source  = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks"
-  version = "~> 5.0"
+  source  = "github.com/terraform-aws-modules/terraform-aws-iam//modules/iam-role-for-service-accounts-eks?ref=v5.39.0"
 
   role_name_prefix      = "VPC-CNI-IRSA"
   attach_vpc_cni_policy = true
@@ -299,8 +299,7 @@ module "vpc_cni_irsa" {
 }
 
 module "ebs_kms_key" {
-  source  = "terraform-aws-modules/kms/aws"
-  version = "~> 1.5"
+  source  = "github.com/terraform-aws-modules/terraform-aws-kms?ref=v2.2.1"
 
   description = "Customer managed key to encrypt EKS managed node group volumes"
 
@@ -323,8 +322,7 @@ module "ebs_kms_key" {
 }
 
 module "key_pair" {
-  source  = "terraform-aws-modules/key-pair/aws"
-  version = "~> 2.0"
+  source  = "github.com/terraform-aws-modules/terraform-aws-key-pair?ref=v2.0.3"
 
   key_name_prefix    = local.name
   create_private_key = true
