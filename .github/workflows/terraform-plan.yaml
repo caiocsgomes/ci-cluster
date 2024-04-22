@@ -1,0 +1,46 @@
+name: Terraform Deploy
+
+on:
+  pull_request:
+    paths:
+    - 'terraform/**'
+    - .github/workflows/terraform-plan.yaml
+
+
+permissions:
+  id-token: write   # This is required for requesting the JWT
+  contents: read    # This is required for actions/checkout
+
+jobs:
+  plan-and-approve:
+    runs-on: ubuntu-latest
+    steps:
+    - name: configure aws credentials
+      uses: aws-actions/configure-aws-credentials@v3.0.1
+      with:
+        role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+        role-session-name: GitHub_to_AWS_via_FederatedOIDC
+        aws-region: ${{ secrets.AWS_REGION }}
+    - name: install terraform
+      uses: hashicorp/setup-terraform@v2
+    - name: checkout repository
+      uses: actions/checkout@v3
+      with:
+        submodules: 'true'
+    - name: terraform init
+      run: terraform init
+      working-directory: terraform/environments/prod
+    - name: terraform plan
+      run: echo "::set-output name=plan::$(terraform plan)"
+      working-directory: terraform/environments/prod
+      id: terraform-plan
+    - name: update PR with plan
+      uses: actions/github-script@v7
+      with:
+        script: |
+          github.issues.createComment({
+            issue_number: context.issue.number,
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            body: '```' + '${{ steps.terraform-plan.outputs.plan }}' + '```'
+          })

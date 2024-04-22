@@ -62,8 +62,6 @@ module "eks" {
   vpc_id     = module.vpc.vpc_id
   subnet_ids = module.vpc.private_subnets
 
-  manage_aws_auth_configmap = true
-
   eks_managed_node_group_defaults = {
     ami_type       = "AL2_x86_64"
     instance_types = var.instance_types
@@ -287,6 +285,7 @@ module "vpc_cni_irsa" {
   role_name_prefix      = "VPC-CNI-IRSA"
   attach_vpc_cni_policy = true
   vpc_cni_enable_ipv6   = true
+  create_role           = true
 
   oidc_providers = {
     main = {
