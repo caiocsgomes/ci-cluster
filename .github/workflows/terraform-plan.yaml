@@ -31,7 +31,11 @@ jobs:
     - name: terraform plan
       run: | 
         terraform plan | tee plan
-        echo "plan=$(cat plan)" >> $GITHUB_ENV
+        {
+          echo 'plan<<EOF'
+          cat plan
+          echo EOF
+        } >> "$GITHUB_ENV"
       working-directory: terraform/environments/prod
       id: terraform-plan
     - name: update PR with plan
