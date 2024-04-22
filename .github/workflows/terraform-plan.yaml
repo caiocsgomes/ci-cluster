@@ -10,7 +10,7 @@ on:
 permissions: write-all
 
 jobs:
-  plan-and-approve:
+  plan:
     runs-on: ubuntu-latest
     steps:
     - name: configure aws credentials
