@@ -7,9 +7,7 @@ on:
     - .github/workflows/terraform-plan.yaml
 
 
-permissions:
-  id-token: write   # This is required for requesting the JWT
-  contents: write    # This is required for actions/checkout
+permissions: write-all
 
 jobs:
   plan-and-approve:
