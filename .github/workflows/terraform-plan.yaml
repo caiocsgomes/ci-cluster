@@ -48,7 +48,9 @@ jobs:
           const output = `### Terraform plan 
           <details><summary>Click to see the plan</summary>
           \`\`\`diff
+
           ${plan} 
+
           \`\`\`
           </details>
           ${truncated_message}`;
