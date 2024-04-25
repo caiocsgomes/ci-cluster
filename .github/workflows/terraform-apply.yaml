@@ -4,6 +4,11 @@ on:
   push:
     branches:
       - master
+    paths:
+      - 'terraform/**'
+      - .github/workflows/terraform-apply.yaml
+
+permissions: write-all
 
 jobs:
   plan-and-approve:
