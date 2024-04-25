@@ -185,7 +185,7 @@ module "eks" {
         echo "you are free little kubelet!"
       EOT
 
-      capacity_type        = "SPOT"
+      capacity_type        = "ON_DEMAND"
       force_update_version = true
       instance_types       = var.instance_types
       labels = {
