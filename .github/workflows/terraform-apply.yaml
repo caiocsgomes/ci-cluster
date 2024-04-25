@@ -1,0 +1,53 @@
+name: "Terraform Apply"
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  plan-and-approve:
+    runs-on: ubuntu-latest
+    steps:
+    - name: configure aws credentials
+      uses: aws-actions/configure-aws-credentials@v3.0.1
+      with:
+        role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+        role-session-name: GitHub_to_AWS_via_FederatedOIDC
+        aws-region: ${{ secrets.AWS_REGION }}
+    - name: install terraform
+      uses: hashicorp/setup-terraform@v2
+    - name: checkout repository
+      uses: actions/checkout@v3
+      with:
+        submodules: 'true'
+    - name: terraform init
+      run: terraform init
+      working-directory: terraform/environments/prod
+    - name: terraform apply
+      run: terraform apply -auto-approve > ${GITHUB_WORKSPACE}/apply.out
+      working-directory: terraform/environments/prod
+    - name: update PR with apply
+      uses: actions/github-script@v7
+      with:
+        script: |
+          const fs = require('fs');
+          const apply_file = fs.readFileSync('${GITHUB_WORKSPACE}/apply.out', 'utf8').toString();
+          const output = `### Terraform Apply
+          <details><summary>Show Output</summary>
+
+          \`\`\`diff
+
+          ${apply_file}
+
+          \`\`\`
+          </details>`;
+
+          github.issues.createComment({
+            issue_number: context.issue.number,
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            body: output
+          })
+
+
