@@ -8,6 +8,8 @@ on:
       - 'terraform/**'
       - .github/workflows/terraform-apply.yaml
 
+  workflow_dispatch:
+
 permissions: write-all
 
 jobs:
