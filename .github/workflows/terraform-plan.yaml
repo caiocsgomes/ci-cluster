@@ -5,7 +5,7 @@ on:
     paths:
     - 'terraform/**'
     - .github/workflows/terraform-plan.yaml
-
+  workflow_dispatch:
 
 permissions: write-all
 
