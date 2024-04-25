@@ -1,0 +1,29 @@
+name: Terraform Detroy
+
+on:
+  workflow_dispatch:
+
+permissions: write-all
+
+jobs:
+  destroy:
+    runs-on: ubuntu-latest
+    steps:
+    - name: configure aws credentials
+      uses: aws-actions/configure-aws-credentials@v3.0.1
+      with:
+        role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+        role-session-name: GitHub_to_AWS_via_FederatedOIDC
+        aws-region: ${{ secrets.AWS_REGION }}
+    - name: install terraform
+      uses: hashicorp/setup-terraform@v2
+    - name: checkout repository
+      uses: actions/checkout@v3
+      with:
+        submodules: 'true'
+    - name: terraform init
+      run: terraform init
+      working-directory: terraform/environments/prod
+    - name: terraform apply
+      run: terraform destroy -auto-approve 
+      working-directory: terraform/environments/prod
