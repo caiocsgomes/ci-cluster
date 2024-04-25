@@ -1,6 +1,6 @@
 locals {
   name            = "ex-${replace(basename(path.cwd), "_", "-")}"
-  cluster_version = "1.27"
+  cluster_version = "1.28"
   region          = var.region
 
   vpc_cidr = var.vpc_cidr
