@@ -1,9 +1,10 @@
 name: "Terraform Apply"
 
 on:
-  push:
+  pull_request:
+    types: [closed]
     branches:
-      - master
+      - main
     paths:
       - 'terraform/**'
       - .github/workflows/terraform-apply.yaml
