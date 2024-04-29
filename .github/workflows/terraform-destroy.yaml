@@ -25,5 +25,5 @@ jobs:
       run: terraform init
       working-directory: terraform/environments/prod
     - name: terraform destroy
-      run: terraform destroy -auto-approve 
+      run: terraform destroy -auto-approve -lock=false
       working-directory: terraform/environments/prod
