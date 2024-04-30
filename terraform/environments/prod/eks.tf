@@ -2,10 +2,9 @@ locals {
   name            = "ex-${replace(basename(path.cwd), "_", "-")}"
   cluster_version = "1.28"
   region          = var.region
-
-  vpc_cidr = var.vpc_cidr
-  azs      = var.availability_zones
-  tags     = var.eks_tags
+  vpc_cidr        = var.vpc_cidr
+  azs             = var.availability_zones
+  tags            = var.eks_tags
 }
 
 # Data about current AWS account
@@ -62,6 +61,13 @@ module "eks" {
   vpc_id     = module.vpc.vpc_id
   subnet_ids = module.vpc.private_subnets
 
+  aws_auth_users = [
+    {
+      user_arn = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:root"
+      username = "root"
+      groups   = ["system:masters"]
+    }
+  ]
   eks_managed_node_groups = {
     # Default node group - as provided by AWS EKS using Bottlerocket
     bottlerocket_default = {
