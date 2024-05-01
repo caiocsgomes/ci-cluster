@@ -61,13 +61,6 @@ module "eks" {
   vpc_id     = module.vpc.vpc_id
   subnet_ids = module.vpc.private_subnets
 
-  aws_auth_users = [
-    {
-      userarn = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:root"
-      username = "root"
-      groups   = ["system:masters"]
-    }
-  ]
   eks_managed_node_groups = {
     # Default node group - as provided by AWS EKS using Bottlerocket
     bottlerocket_default = {
