@@ -2,10 +2,9 @@ locals {
   name            = "ex-${replace(basename(path.cwd), "_", "-")}"
   cluster_version = "1.28"
   region          = var.region
-
-  vpc_cidr = var.vpc_cidr
-  azs      = var.availability_zones
-  tags     = var.eks_tags
+  vpc_cidr        = var.vpc_cidr
+  azs             = var.availability_zones
+  tags            = var.eks_tags
 }
 
 # Data about current AWS account

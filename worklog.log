@@ -1,2 +1,3 @@
-- 100123 Organized and studied a bit more environment division in terraform; created backend for prod; coded vpc module
-- 110123 Created vpc using module; created initial workflow for terraform
+TODO: Study how to access control plane
+TODO: Deploy github actions arc and runners mannually in the cluster
+
