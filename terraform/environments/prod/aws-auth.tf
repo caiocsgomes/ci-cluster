@@ -1,4 +1,4 @@
-module "eks" {
+module "aws-auth" {
   source  = "terraform-aws-modules/eks/aws//modules/aws-auth"
   version = "~> 20.8.5"
 
