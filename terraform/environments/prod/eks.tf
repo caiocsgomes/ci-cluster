@@ -19,7 +19,7 @@ provider "kubernetes" {
   host                   = module.eks.cluster_endpoint
   cluster_ca_certificate = base64decode(module.eks.cluster_certificate_authority_data)
 
-  token = module.aws_eks_cluster_auth.default.token
+  token = data.aws_eks_cluster_auth.default.token
 }
 
 module "eks" {
