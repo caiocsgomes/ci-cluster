@@ -3,8 +3,6 @@ terraform {
     aws = {
       source  = "hashicorp/aws"
       version = "~> 5.40.0"
-      region  = "us-east-1"
-      profile = "default"
     }
   }
 
@@ -15,4 +13,9 @@ terraform {
     dynamodb_table = "aws-eks-cluster-tf-backend"
     encrypt        = true
   }
+}
+
+provider "aws" {
+  region = var.region
+  profile = var.profile
 }
