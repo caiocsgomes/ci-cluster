@@ -37,6 +37,23 @@ module "eks" {
 
   enable_cluster_creator_admin_permissions = true
 
+  # https://docs.aws.amazon.com/eks/latest/userguide/grant-k8s-access.html
+  access_entries = {
+    # One access entry with a policy associated
+    ex-single = {
+      kubernetes_groups = ["system:masters"]
+      principal_arn     = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:user/caio"
+
+      policy_associations = {
+        single = {
+          policy_arn = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSClusterAdminPolicy"
+          access_scope = {
+            type       = "cluster"
+          }
+        }
+      }
+    }
+  }
   cluster_addons = {
     coredns = {
       most_recent = true
@@ -76,47 +93,6 @@ module "eks" {
       platform = "bottlerocket"
     }
   }
-
-  # access_entries = {
-  #   # One access entry with a policy associated
-  #   ex-single = {
-  #     kubernetes_groups = []
-  #     principal_arn     = aws_iam_role.this["single"].arn
-  #
-  #     policy_associations = {
-  #       single = {
-  #         policy_arn = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSViewPolicy"
-  #         access_scope = {
-  #           namespaces = ["default"]
-  #           type       = "namespace"
-  #         }
-  #       }
-  #     }
-  #   }
-  #
-  #   # Example of adding multiple policies to a single access entry
-  #   ex-multiple = {
-  #     kubernetes_groups = []
-  #     principal_arn     = aws_iam_role.this["multiple"].arn
-  #
-  #     policy_associations = {
-  #       ex-one = {
-  #         policy_arn = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSEditPolicy"
-  #         access_scope = {
-  #           namespaces = ["default"]
-  #           type       = "namespace"
-  #         }
-  #       }
-  #       ex-two = {
-  #         policy_arn = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSViewPolicy"
-  #         access_scope = {
-  #           type = "cluster"
-  #         }
-  #       }
-  #     }
-  #   }
-  # }
-
   tags = local.tags
 }
 
