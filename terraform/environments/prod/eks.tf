@@ -10,9 +10,7 @@ locals {
   azs      = slice(data.aws_availability_zones.available.names, 0, 3)
 
   tags = {
-    Example    = local.name
-    GithubRepo = "terraform-aws-eks"
-    GithubOrg  = "terraform-aws-modules"
+    project = "aws-eks-cluster"
   }
 }
 
@@ -38,10 +36,6 @@ module "eks" {
   create_cni_ipv6_iam_policy = true
 
   enable_cluster_creator_admin_permissions = true
-
-  # Enable EFA support by adding necessary security group rules
-  # to the shared node security group
-  enable_efa_support = true
 
   cluster_addons = {
     coredns = {
