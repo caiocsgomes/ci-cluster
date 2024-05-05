@@ -38,10 +38,11 @@ module "eks" {
   enable_cluster_creator_admin_permissions = true
 
   # https://docs.aws.amazon.com/eks/latest/userguide/grant-k8s-access.html
+  # https://fixit-xdu.medium.com/aws-eks-access-entry-4a7e25ed6c3a
   access_entries = {
     # One access entry with a policy associated
     ex-single = {
-      kubernetes_groups = ["system:masters"]
+      kubernetes_groups = []
       principal_arn     = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:user/caio"
 
       policy_associations = {
