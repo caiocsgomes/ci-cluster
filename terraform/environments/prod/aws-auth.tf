@@ -3,7 +3,6 @@ module "aws-auth" {
   version = "~> 20.8.5"
 
   manage_aws_auth_configmap = true
-  create_aws_auth_configmap = true
   aws_auth_users = [
     {
       userarn  = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:user/caio"
