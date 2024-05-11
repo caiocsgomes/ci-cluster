@@ -41,7 +41,7 @@ module "eks" {
   # https://fixit-xdu.medium.com/aws-eks-access-entry-4a7e25ed6c3a
   access_entries = {
     # One access entry with a policy associated
-    ex-single = {
+    admin = {
       kubernetes_groups = []
       principal_arn     = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:user/caio"
 
@@ -55,6 +55,7 @@ module "eks" {
       }
     }
   }
+
   cluster_addons = {
     coredns = {
       most_recent = true
@@ -109,9 +110,9 @@ module "vpc" {
   cidr = local.vpc_cidr
 
   azs             = local.azs
-  private_subnets = [for k, v in local.azs : cidrsubnet(local.vpc_cidr, 4, k)]
-  public_subnets  = [for k, v in local.azs : cidrsubnet(local.vpc_cidr, 8, k + 48)]
-  intra_subnets   = [for k, v in local.azs : cidrsubnet(local.vpc_cidr, 8, k + 52)]
+  private_subnets = [for k, v in local.azs : cidrsubnet(local.vpc_cidr, 4, k)] ## 10.0.0.0/20, 10.0.16.0/20, 10.0.32.0/20
+  public_subnets  = [for k, v in local.azs : cidrsubnet(local.vpc_cidr, 8, k + 48)] ## 10.0.48.0/24, 10.0.49.0/24, 10.0.50.0/24
+  intra_subnets   = [for k, v in local.azs : cidrsubnet(local.vpc_cidr, 8, k + 52)] ## Subnet with no routing to the internet
 
   enable_nat_gateway     = true
   single_nat_gateway     = true
