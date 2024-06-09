@@ -1,0 +1,42 @@
+# TODO:  trigger this as a dispatch after apply is finished
+# TODO: Add argocd as an app using kubectl
+name: "Bootstrap Argo CD"
+
+on:
+  workflow_run:
+    workflows: [terrafprm-apply]
+    types:
+      - completed
+jobs:
+  argo_cd:
+    runs-on: ubuntu-latest
+    environment: prod
+    steps:
+    - name: configure aws credentials
+      uses: aws-actions/configure-aws-credentials@v3.0.1
+      with:
+        role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+        role-session-name: GitHub_to_AWS_via_FederatedOIDC
+        aws-region: ${{ secrets.AWS_REGION }}
+    - id: install-aws-cli
+      uses: unfor19/install-aws-cli-action@v1
+      with:
+        version: 2                         # default
+        verbose: false                     # default
+        arch: amd64                        # allowed values: amd64, arm64
+    - name: verify aws  profile
+      run: |
+        aws sts get-caller-identity
+        aws configure list
+    - name: install kubectl
+      uses: azure/k8s-set-context@v1
+      with:
+        install-kubectl: true
+        version: '1.29'
+    - name: configure kubectl
+      run: |
+        aws eks update-kubeconfig --name ${{ secrets.EKS_CLUSTER_NAME }} --region ${{ secrets.AWS_REGION }}
+    - name: install argocd
+      run: |
+        kubectl create namespace argocd
+        kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
