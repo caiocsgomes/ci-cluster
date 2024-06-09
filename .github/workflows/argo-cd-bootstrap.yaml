@@ -7,6 +7,10 @@ on:
     workflows: ["Terraform Apply"]
     types:
       - completed
+  workflow_dispatch:
+
+permissions: write-all
+
 jobs:
   argo_cd:
     runs-on: ubuntu-latest
