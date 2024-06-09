@@ -33,7 +33,7 @@ jobs:
         aws sts get-caller-identity
         aws configure list
     - name: install kubectl
-      uses: azure/k8s-set-context@v1
+      uses: azure/setup-kubectl@v1
       with:
         install-kubectl: true
         version: '1.29'
