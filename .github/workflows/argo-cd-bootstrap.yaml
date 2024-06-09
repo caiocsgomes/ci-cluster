@@ -35,7 +35,7 @@ jobs:
     - name: install kubectl
       uses: azure/setup-kubectl@v1
       with:
-        version: '1.29'
+        version: 'v1.29.0'
     - name: configure kubectl
       run: |
         aws eks update-kubeconfig --name ${{ secrets.EKS_CLUSTER_NAME }} --region ${{ secrets.AWS_REGION }}
