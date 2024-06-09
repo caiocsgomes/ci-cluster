@@ -4,7 +4,7 @@ name: "Bootstrap Argo CD"
 
 on:
   workflow_run:
-    workflows: [terrafprm-apply]
+    workflows: ["Terraform Apply"]
     types:
       - completed
 jobs:
