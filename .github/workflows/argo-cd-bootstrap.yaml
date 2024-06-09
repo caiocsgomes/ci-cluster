@@ -35,7 +35,6 @@ jobs:
     - name: install kubectl
       uses: azure/setup-kubectl@v1
       with:
-        install-kubectl: true
         version: '1.29'
     - name: configure kubectl
       run: |
