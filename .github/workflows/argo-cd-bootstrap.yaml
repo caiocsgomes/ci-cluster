@@ -41,7 +41,7 @@ jobs:
       id: verify-argocd-namespace
       run: echo "ns=$(k get ns argocd -o=jsonpath="{.metadata.name}")" >> "$GITHUB_OUTPUT"
     - name: install argocd
-      if: steps.verify-argocd-namespace.outputs.ns != "argocd"
+      if: ${{ (steps.verify-argocd-namespace.outputs.ns != "argocd") }}
       run: |
         kubectl create namespace argocd
         kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
