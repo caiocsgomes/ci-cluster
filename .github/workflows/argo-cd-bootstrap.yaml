@@ -39,7 +39,7 @@ jobs:
         aws eks update-kubeconfig --name ${{ secrets.EKS_CLUSTER_NAME }} --region ${{ secrets.AWS_REGION }}
     - name: verify argocd namespace
       id: verify-argocd-namespace
-      run: echo "ns=$(k get ns argocd -o=jsonpath="{.metadata.name}")" >> "$GITHUB_OUTPUT"
+      run: echo "ns=$(kubectl get ns argocd -o=jsonpath="{.metadata.name}")" >> "$GITHUB_OUTPUT"
     - name: install argocd
       if: ${{ (steps.verify-argocd-namespace.outputs.ns != 'argocd') }}
       run: |
