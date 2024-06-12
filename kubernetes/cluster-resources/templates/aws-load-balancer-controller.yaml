@@ -1,0 +1,20 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: aws-load-balancer-controller
+  namespace: argocd
+spec:
+  project: default
+  source:
+    chart: aws-load-balancer-controller
+    repoURL: https://aws.github.io/eks-charts
+    helm:
+      releaseName: aws-load-balancer-controller
+      valuesObject:
+        clusterName: aws-eks-cluster
+        serviceAccount:
+          create: false
+          name: aws-load-balancer-controller
+  destination:
+    server: "https://kubernetes.default.svc"
+    namespace: kube-system
