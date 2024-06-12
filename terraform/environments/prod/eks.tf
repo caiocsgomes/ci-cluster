@@ -49,7 +49,7 @@ module "eks" {
         single = {
           policy_arn = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSClusterAdminPolicy"
           access_scope = {
-            type       = "cluster"
+            type = "cluster"
           }
         }
       }
@@ -110,7 +110,7 @@ module "vpc" {
   cidr = local.vpc_cidr
 
   azs             = local.azs
-  private_subnets = [for k, v in local.azs : cidrsubnet(local.vpc_cidr, 4, k)] ## 10.0.0.0/20, 10.0.16.0/20, 10.0.32.0/20
+  private_subnets = [for k, v in local.azs : cidrsubnet(local.vpc_cidr, 4, k)]      ## 10.0.0.0/20, 10.0.16.0/20, 10.0.32.0/20
   public_subnets  = [for k, v in local.azs : cidrsubnet(local.vpc_cidr, 8, k + 48)] ## 10.0.48.0/24, 10.0.49.0/24, 10.0.50.0/24
   intra_subnets   = [for k, v in local.azs : cidrsubnet(local.vpc_cidr, 8, k + 52)] ## Subnet with no routing to the internet
 
