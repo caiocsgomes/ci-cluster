@@ -1,3 +1,4 @@
+## TODO: Add cron to destroy every night
 name: Terraform Destroy
 
 on:
