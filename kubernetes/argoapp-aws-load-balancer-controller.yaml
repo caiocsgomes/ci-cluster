@@ -8,7 +8,7 @@ spec:
   source:
     repoURL: https://github.com/caiocsgomes/aws-eks-cluster
     path: kubernetes/aws-load-balancer-controller
-    targetRevision: HEAD
+    targetRevision: main
     helm:
       valueFiles:
         - values.yaml
