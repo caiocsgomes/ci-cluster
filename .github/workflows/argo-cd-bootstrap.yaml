@@ -1,3 +1,5 @@
+## TODO: Study argocd login
+## TODO: Study how to access the argocd server
 name: "Bootstrap Argo CD"
 
 on:
@@ -20,43 +22,35 @@ jobs:
         role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
         role-session-name: GitHub_to_AWS_via_FederatedOIDC
         aws-region: ${{ secrets.AWS_REGION }}
+
     - id: install-aws-cli
       uses: unfor19/install-aws-cli-action@v1
       with:
         version: 2                         # default
         verbose: false                     # default
         arch: amd64                        # allowed values: amd64, arm64
+
     - name: verify aws  profile
       run: |
         aws sts get-caller-identity
         aws configure list
+
     - name: install kubectl
       uses: azure/setup-kubectl@v1
       with:
         version: 'v1.29.0'
+
     - name: configure kubectl
       run: |
         aws eks update-kubeconfig --name ${{ secrets.EKS_CLUSTER_NAME }} --region ${{ secrets.AWS_REGION }}
+
     - name: verify argocd namespace
       id: verify-argocd-namespace
       run: echo "ns=$(kubectl get ns argocd -o=jsonpath="{.metadata.name}")" >> "$GITHUB_OUTPUT"
+
     - name: install argocd
       if: ${{ (steps.verify-argocd-namespace.outputs.ns != 'argocd') }}
       run: |
         kubectl create namespace argocd
-        kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
-    - name: install argocd cli
-      run: |
-        curl -sSL -o argocd-linux-amd64 https://github.com/argoproj/argo-cd/releases/latest/download/argocd-linux-amd64
-        sudo install -m 555 argocd-linux-amd64 /usr/local/bin/argocd
-        rm argocd-linux-amd64
-    - name: checkout code
-      uses: actions/checkout@v4
-    - name: install app of apps
-      run: |
-        argocd app create app-of-apps-cluster-resources \
-        --dest-namespace argocd \
-        --dest-server https://kubernetes.default.svc \
-        --repo https://github.com/caiocsgomes/aws-eks-cluster.git \
-        --path kubernetes/cluster-resources
-        argocd app sync app-of-apps-cluster-resources
+        kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/v2.9.3/manifests/install.yaml
+

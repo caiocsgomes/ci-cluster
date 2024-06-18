@@ -8,21 +8,14 @@ spec:
   source:
     repoURL: https://github.com/caiocsgomes/aws-eks-cluster
     path: kubernetes/aws-load-balancer-controller
-    targetRevision: main
+    targetRevision: HEAD
     helm:
       valueFiles:
         - values.yaml
   destination:
     server: "https://kubernetes.default.svc"
-    # server: "https://5A129E09A8074D75C0BD4A5CE5D38C31.gr7.us-east-1.eks.amazonaws.com"
-    namespace: aws-load-balancer-controller
+    namespace: 'aws-load-balancer-controller'
   syncPolicy:
     automated:
       prune: true
       selfHeal: true
-    syncOptions:
-      - CreateNamespace=true
-operation:
-  sync:
-    syncStrategy:
-      hook: {}
