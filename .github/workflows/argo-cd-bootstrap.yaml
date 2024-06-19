@@ -1,5 +1,3 @@
-## TODO: Study argocd login
-## TODO: Study how to access the argocd server
 name: "Bootstrap Argo CD"
 
 on:
@@ -54,3 +52,8 @@ jobs:
         kubectl create namespace argocd
         kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/v2.9.3/manifests/install.yaml
 
+    - name: checkout code
+      uses: actions/checkout@v4
+
+    - name: install cluster app of apps
+      run: kubectl apply -f kubernetes/app-of-apps-cluster.yaml
