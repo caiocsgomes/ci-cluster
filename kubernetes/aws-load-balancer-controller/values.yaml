@@ -30,7 +30,7 @@ aws-load-balancer-controller:
 
   serviceAccount:
     # Specifies whether a service account should be created
-    create: false
+    create: true
     # Annotations to add to the service account
     annotations:
       eks.amazonaws.com/role-arn: arn:aws:iam::322620855520:role/aws-load-balancer-controller
