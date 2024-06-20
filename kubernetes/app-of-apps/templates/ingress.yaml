@@ -7,11 +7,11 @@ spec:
   project: default
   source:
     repoURL: https://github.com/caiocsgomes/aws-eks-cluster
-    path: kubernetes/argocd
+    path: kubernetes/ingress
     targetRevision: HEAD
   destination:
     server: "https://kubernetes.default.svc"
-    namespace: 'argocd'
+    namespace: 'ingress'
   syncPolicy:
     automated:
       prune: true
