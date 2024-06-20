@@ -1,3 +1,5 @@
-TODO: Study how to access control plane
 TODO: Deploy github actions arc and runners mannually in the cluster
-
+TODO: Study OIDC
+TODO: Add load balancer controller on cluster
+TODO: read https://www.reddit.com/r/kubernetes/comments/18bkvql/how_to_run_deploy_script_after_cluster_creation/
+TODO: Study ordering in argocd
