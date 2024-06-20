@@ -260,6 +260,7 @@ module "iam_eks_role" {
   oidc_providers = {
     one = {
       provider_arn               = module.eks.oidc_provider_arn
+      namespace_service_accounts = ["*"]
     }
   }
 }
