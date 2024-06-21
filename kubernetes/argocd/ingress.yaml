@@ -6,15 +6,16 @@ metadata:
   annotations:
     alb.ingress.kubernetes.io/scheme: internet-facing
     alb.ingress.kubernetes.io/target-type: ip
+    alb.ingress.kubernetes.io/group.name: ingress
 spec:
   ingressClassName: alb
   rules:
     - http:
         paths:
-        - path: /argocd
-          pathType: Exact
-          backend:
-            service:
-              name: argocd-server
-              port:
-                name: http
+          - path: /argocd
+            pathType: Exact
+            backend:
+              service:
+                name: argocd-server
+                port:
+                  name: http
