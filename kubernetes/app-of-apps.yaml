@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: app-of-apps-cluster
+  name: app-of-apps
   namespace: argocd
   finalizers:
     - resources-finalizer.argocd.argoproj.io
@@ -10,7 +10,7 @@ spec:
     namespace: argocd
     server: 'https://kubernetes.default.svc'
   source:
-    path: kubernetes/app-of-apps-cluster
+    path: kubernetes/app-of-apps
     repoURL: https://github.com/caiocsgomes/aws-eks-cluster
     targetRevision: HEAD
   project: default
