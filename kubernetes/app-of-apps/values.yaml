@@ -1,3 +1,8 @@
-spec:
-  destination:
-    server: https://kubernetes.default.svc
+github_repo: https://github.com/caiocsgomes/aws-eks-cluster
+base_path: kubernetes
+destination:
+  server: https://kubernetes.default.svc
+charts:
+- name: aws-load-balancer-controller
+  annotations:
+    argocd.argoproj.io/sync-wave: -1
