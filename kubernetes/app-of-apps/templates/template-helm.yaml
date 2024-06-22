@@ -6,7 +6,7 @@ metadata:
   namespace: argocd
   annotations:
     argocd.argoproj.io/sync-options: Prune=true
-    {{ $chart.annotations | toYaml }}
+    argocd.argoproj.io/sync-wave: {{ $chart.sync_wave | default 0  }}
 spec:
   project: default
   source:

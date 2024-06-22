@@ -4,5 +4,6 @@ destination:
   server: https://kubernetes.default.svc
 charts:
 - name: aws-load-balancer-controller
-  annotations:
-    argocd.argoproj.io/sync-wave: -1
+  sync_wave: -1
+manifests:
+- name: argocd

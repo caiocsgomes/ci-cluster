@@ -5,4 +5,5 @@ I'm bootstraping the cluster by adding argocd first and letting it take care of 
 - https://argoproj.github.io/argo-cd/operator-manual/cluster-bootstrapping/
 
 ### Useful links
+
 - https://github.com/argoproj/argocd-example-apps/blob/master/helm-dependency/README.md
