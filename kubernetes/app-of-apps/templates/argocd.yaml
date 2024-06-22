@@ -11,7 +11,7 @@ spec:
     targetRevision: HEAD
   destination:
     server: "https://kubernetes.default.svc"
-    namespace: 'ingress'
+    namespace: 'argocd'
   syncPolicy:
     automated:
       prune: true
