@@ -56,4 +56,4 @@ jobs:
       uses: actions/checkout@v4
 
     - name: install cluster app of apps
-      run: kubectl apply -f kubernetes/app-of-apps-cluster.yaml
+      run: kubectl apply -f kubernetes/app-of-apps.yaml
