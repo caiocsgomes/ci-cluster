@@ -1,8 +1,11 @@
 ## TODO: Add cron to destroy every night
+## TODO: Add a check to see if the cluster is empty before destroying
 name: Terraform Destroy
 
 on:
   workflow_dispatch:
+  schedule:
+    - cron: '0 0 * * *'
 
 permissions: write-all
 
@@ -16,15 +19,31 @@ jobs:
         role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
         role-session-name: GitHub_to_AWS_via_FederatedOIDC
         aws-region: ${{ secrets.AWS_REGION }}
+
     - name: install terraform
       uses: hashicorp/setup-terraform@v2
+
     - name: checkout repository
       uses: actions/checkout@v3
       with:
         submodules: 'true'
+
+    - name: install kubectl
+      uses: azure/setup-kubectl@v1
+      with:
+        version: 'v1.29.0'
+
+    - name: configure kubectl
+      run: |
+        aws eks update-kubeconfig --name ${{ secrets.EKS_CLUSTER_NAME }} --region ${{ secrets.AWS_REGION }}
+
+    - name: install cluster app of apps
+      run: kubectl delete -f kubernetes/app-of-apps.yaml
+
     - name: terraform init
       run: terraform init
       working-directory: terraform/environments/prod
+
     - name: terraform destroy
       run: terraform destroy -auto-approve -lock=false
       working-directory: terraform/environments/prod
