@@ -11,14 +11,14 @@ metadata:
   namespace: argocd
 spec:
   ports:
-  - name: "443"
-    port: 443
-    protocol: TCP
-    targetPort: 8080
+    - name: "443"
+      port: 443
+      protocol: TCP
+      targetPort: 8080
   selector:
     app.kubernetes.io/name: argocd-server
   sessionAffinity: None
-  type: NodePort 
+  type: NodePort
 ---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
@@ -38,23 +38,23 @@ metadata:
 spec:
   ingressClassName: alb
   rules:
-  # - host: argocd.argoproj.io
-  - http:
-      paths:
-      - path: /
-        backend:
-          service:
-            name: argogrpc
-            port:
-              number: 443
-        pathType: Prefix
-      - path: /argocd
-        backend:
-          service:
-            name: argocd-server
-            port:
-              number: 443
-        pathType: Exact
-  # tls:
-  # - hosts:
-  #   - argocd.argoproj.io
+    - host: argocd.argoproj.io
+      http:
+        paths:
+          - path: /
+            backend:
+              service:
+                name: argogrpc
+                port:
+                  number: 443
+            pathType: Prefix
+          - path: /argocd
+            backend:
+              service:
+                name: argocd-server
+                port:
+                  number: 443
+            pathType: Exact
+  tls:
+    - hosts:
+        - argocd.argoproj.io
