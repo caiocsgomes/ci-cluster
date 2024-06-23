@@ -12,6 +12,7 @@ permissions: write-all
 jobs:
   destroy:
     runs-on: ubuntu-latest
+    environment: prod
     steps:
     - name: configure aws credentials
       uses: aws-actions/configure-aws-credentials@v3.0.1
