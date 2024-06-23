@@ -28,7 +28,7 @@ metadata:
   annotations:
     alb.ingress.kubernetes.io/scheme: internet-facing
     alb.ingress.kubernetes.io/target-type: ip
-    alb.ingress.kubernetes.io/group.name: ingress
+    alb.ingress.kubernetes.io/group.name: eks-lab-ingress
     alb.ingress.kubernetes.io/healthcheck-protocol: HTTPS
     alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:us-east-1:322620855520:certificate/83e1e2db-0fb4-48bf-8509-874896afc07d
     alb.ingress.kubernetes.io/listen-ports: '[{"HTTPS":443}]'
@@ -38,24 +38,23 @@ metadata:
 spec:
     ingressClassName: alb
     rules:
-    - host: argocd.argoproj.io
-      http:
+    - http:
         paths:
-        - path: /
+        - path: /argocd
           backend:
             service:
               name: argogrpc
               port:
                 number: 443
-          pathType: Prefix
-        - path: /
-          backend:
-            service:
-              name: argocd-server
-              port:
-                number: 443
-          pathType: Prefix
-    tls:
-    - hosts:
-      - argocd.argoproj.io
-
+          pathType: Exact
+        # - path: /
+        #   backend:
+        #     service:
+        #       name: argocd-server
+        #       port:
+        #         number: 443
+        #   pathType: Prefix
+    # tls:
+    # - hosts:
+    #   - argocd.argoproj.io
+    #
