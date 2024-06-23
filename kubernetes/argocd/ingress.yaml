@@ -36,6 +36,7 @@ metadata:
     alb.ingress.kubernetes.io/conditions.argogrpc: |
       [{"field":"http-header","httpHeaderConfig":{"httpHeaderName": "Content-Type", "values":["application/grpc"]}}]
 spec:
+    ingressClassName: alb
     rules:
     - host: argocd.argoproj.io
       http:
