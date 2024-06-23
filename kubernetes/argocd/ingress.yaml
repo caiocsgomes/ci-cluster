@@ -38,7 +38,7 @@ metadata:
 spec:
   ingressClassName: alb
   rules:
-    - host: eks.caiogomes.me
+    - host: argocd.eks.caiogomes.me
       http:
         paths:
           - path: /
@@ -48,13 +48,13 @@ spec:
                 port:
                   number: 443
             pathType: Prefix
-          - path: /argocd
+          - path: /
             backend:
               service:
                 name: argocd-server
                 port:
                   number: 443
-            pathType: Exact
+            pathType: Prefix
   tls:
     - hosts:
-        - eks.caiogomes.me
+        - argocd.eks.caiogomes.me
