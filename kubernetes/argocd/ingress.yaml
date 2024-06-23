@@ -36,25 +36,25 @@ metadata:
     alb.ingress.kubernetes.io/conditions.argogrpc: |
       [{"field":"http-header","httpHeaderConfig":{"httpHeaderName": "Content-Type", "values":["application/grpc"]}}]
 spec:
-    ingressClassName: alb
-    rules:
-    - http:
-        paths:
-        - path: /argocd
-          backend:
-            service:
-              name: argogrpc
-              port:
-                number: 443
-          pathType: Exact
-        # - path: /
-        #   backend:
-        #     service:
-        #       name: argocd-server
-        #       port:
-        #         number: 443
-        #   pathType: Prefix
-    # tls:
-    # - hosts:
-    #   - argocd.argoproj.io
-    #
+  ingressClassName: alb
+  rules:
+  # - host: argocd.argoproj.io
+  - http:
+      paths:
+      - path: /
+        backend:
+          service:
+            name: argogrpc
+            port:
+              number: 443
+        pathType: Prefix
+      - path: /argocd
+        backend:
+          service:
+            name: argocd-server
+            port:
+              number: 443
+        pathType: Exact
+  # tls:
+  # - hosts:
+  #   - argocd.argoproj.io
