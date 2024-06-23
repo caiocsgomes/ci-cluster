@@ -1,3 +1,4 @@
+## TODO: Check how cascade delete works with ArgoCD for this app
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
