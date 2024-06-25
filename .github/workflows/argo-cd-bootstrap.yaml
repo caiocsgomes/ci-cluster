@@ -57,3 +57,31 @@ jobs:
 
     - name: install cluster app of apps
       run: kubectl apply -f kubernetes/app-of-apps.yaml
+
+    - name: verify if all apps are synced
+      run: |
+        while true; do
+          sync_status=`(kubectl -n argocd get Application -o=jsonpath='{.items[*].status.sync.status}')`
+          for status in $sync_status; do
+            if [ "$status" != "Synced" ]; then
+              echo "Not all apps are synced, waiting 10 seconds"
+              sleep 10
+              continue 2
+            fi
+            break 2
+          done
+        done
+
+    - name: verify if all apps are healthy
+      run: |
+        while true; do
+          health_status=`(kubectl -n argocd get Application -o=jsonpath='{.items[*].status.health.status}')`
+          for status in $health_status; do
+            if [ "$status" != "Healthy" ]; then
+              echo "Not all apps are healthy, waiting 10 seconds"
+              sleep 10
+              continue 2
+            fi
+            break 2
+          done
+        done

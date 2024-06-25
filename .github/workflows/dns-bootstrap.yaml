@@ -1,2 +1,0 @@
-## TODO: Add logic to get load balancers by the tags using the AWS SDK and add the route to it, the logic just need to add one load balancer as we are using ingress to add the rules to only one load balancer
-## TODO: The workflow needs to be triggered after argocd bootstrap finishes
