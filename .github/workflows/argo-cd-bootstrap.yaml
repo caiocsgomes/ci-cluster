@@ -1,87 +1,98 @@
 name: "Bootstrap Argo CD"
-
 on:
   workflow_run:
     workflows: ["Terraform Apply"]
     types:
       - completed
   workflow_dispatch:
-
 permissions: write-all
-
 jobs:
   argo_cd:
     runs-on: ubuntu-latest
     environment: prod
     steps:
-    - name: configure aws credentials
-      uses: aws-actions/configure-aws-credentials@v3.0.1
-      with:
-        role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
-        role-session-name: GitHub_to_AWS_via_FederatedOIDC
-        aws-region: ${{ secrets.AWS_REGION }}
+      - name: configure aws credentials
+        uses: aws-actions/configure-aws-credentials@v3.0.1
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          role-session-name: GitHub_to_AWS_via_FederatedOIDC
+          aws-region: ${{ secrets.AWS_REGION }}
+          argocd-admin-password: ${{ secrets.ARGOCD_ADMIN_PASSWORD }}
 
-    - id: install-aws-cli
-      uses: unfor19/install-aws-cli-action@v1
-      with:
-        version: 2                         # default
-        verbose: false                     # default
-        arch: amd64                        # allowed values: amd64, arm64
+      - id: install-aws-cli
+        uses: unfor19/install-aws-cli-action@v1
+        with:
+          version: 2 # default
+          verbose: false # default
+          arch: amd64 # allowed values: amd64, arm64
 
-    - name: verify aws  profile
-      run: |
-        aws sts get-caller-identity
-        aws configure list
+      - name: verify aws  profile
+        run: |
+          aws sts get-caller-identity
+          aws configure list
 
-    - name: install kubectl
-      uses: azure/setup-kubectl@v1
-      with:
-        version: 'v1.29.0'
+      - name: install kubectl
+        uses: azure/setup-kubectl@v1
+        with:
+          version: 'v1.29.0'
 
-    - name: configure kubectl
-      run: |
-        aws eks update-kubeconfig --name ${{ secrets.EKS_CLUSTER_NAME }} --region ${{ secrets.AWS_REGION }}
+      - name: configure kubectl
+        run: |
+          aws eks update-kubeconfig --name ${{ secrets.EKS_CLUSTER_NAME }} --region ${{ secrets.AWS_REGION }}
 
-    - name: verify argocd namespace
-      id: verify-argocd-namespace
-      run: echo "ns=$(kubectl get ns argocd -o=jsonpath="{.metadata.name}")" >> "$GITHUB_OUTPUT"
+      - name: verify argocd namespace
+        id: verify-argocd-namespace
+        run: echo "ns=$(kubectl get ns argocd -o=jsonpath="{.metadata.name}")" >> "$GITHUB_OUTPUT"
 
-    - name: install argocd
-      if: ${{ (steps.verify-argocd-namespace.outputs.ns != 'argocd') }}
-      run: |
-        kubectl create namespace argocd
-        kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/v2.9.3/manifests/install.yaml
+      - name: install argocd
+        if: ${{ (steps.verify-argocd-namespace.outputs.ns != 'argocd') }}
+        run: |
+          kubectl create namespace argocd
+          kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/v2.9.3/manifests/install.yaml
 
-    - name: checkout code
-      uses: actions/checkout@v4
+      - name: checkout code
+        uses: actions/checkout@v4
 
-    - name: install cluster app of apps
-      run: kubectl apply -f kubernetes/app-of-apps.yaml
+      - name: install cluster app of apps
+        run: kubectl apply -f kubernetes/app-of-apps.yaml
 
-    - name: verify if all apps are synced
-      run: |
-        while true; do
-          sync_status=`(kubectl -n argocd get Application -o=jsonpath='{.items[*].status.sync.status}')`
-          for status in $sync_status; do
-            if [ "$status" != "Synced" ]; then
-              echo "Not all apps are synced, waiting 10 seconds"
-              sleep 10
-              continue 2
-            fi
-            break 2
+      - name: verify if all apps are synced
+        run: |
+          while true; do
+            sync_status=`(kubectl -n argocd get Application -o=jsonpath='{.items[*].status.sync.status}')`
+            for status in $sync_status; do
+              if [ "$status" != "Synced" ]; then
+                echo "Not all apps are synced, waiting 10 seconds"
+                sleep 10
+                continue 2
+              fi
+              break 2
+            done
           done
-        done
 
-    - name: verify if all apps are healthy
-      run: |
-        while true; do
-          health_status=`(kubectl -n argocd get Application -o=jsonpath='{.items[*].status.health.status}')`
-          for status in $health_status; do
-            if [ "$status" != "Healthy" ]; then
-              echo "Not all apps are healthy, waiting 10 seconds"
-              sleep 10
-              continue 2
-            fi
-            break 2
+      - name: verify if all apps are healthy
+        run: |
+          while true; do
+            health_status=`(kubectl -n argocd get Application -o=jsonpath='{.items[*].status.health.status}')`
+            for status in $health_status; do
+              if [ "$status" != "Healthy" ]; then
+                echo "Not all apps are healthy, waiting 10 seconds"
+                sleep 10
+                continue 2
+              fi
+              break 2
+            done
           done
-        done
+
+      - name: set dns record to alb
+        run: |
+          alb_arn=$(aws elbv2 describe-load-balancers --region ${{ secrets.AWS_REGION }} | jq -r '.LoadBalancers[].LoadBalancerArn' | xargs -I {} aws --region ${{ secrets.AWS_REGION }} elbv2 describe-tags --resource-arns {} --query "TagDescriptions[?Tags[?Key=='ingress.k8s.aws/stack' &&Value=='eks-lab-ingress']].ResourceArn" --output text)
+          ## Get the ALB DNS Name
+          alb_dns=$(aws elbv2 describe-load-balancers --region ${{ secrets.AWS_REGION }} --query "LoadBalancers[?LoadBalancerArn=='${alb_arn}'].DNSName" --output text)
+          ## Get hosted zone id
+          hosted_zone_id=$(aws route53 list-hosted-zones --query "HostedZones[?Name=='caiogomes.me.'].Id" --output text)
+          ## Set the DNS record to the ALB DNS Name
+          aws route53 change-resource-record-sets --hosted-zone-id $hosted_zone_id --change-batch '{"Changes":[{"Action":"UPSERT","ResourceRecordSet":{"Name":"*.eks.caiogomes.me.","Type":"CNAME","TTL":300,"ResourceRecords":[{"Value":"'${alb_dns}'"}]}}]}'
+      - name: set argocd admin password
+        run: |
+          kubectl -n argocd patch secret argocd-secret -p '{"stringData": {"admin.password": "${{ secrets.ARGOCD_ADMIN_PASSWORD }}"}}'
