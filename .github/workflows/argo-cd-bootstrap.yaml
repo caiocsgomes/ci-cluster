@@ -93,7 +93,7 @@ jobs:
           ## Get hosted zone id
           hosted_zone_id=$(aws route53 list-hosted-zones --query "HostedZones[?Name=='caiogomes.me.'].Id" --output text)
           ## Set the DNS record to the ALB DNS Name
-          aws route53 change-resource-record-sets --hosted-zone-id $hosted_zone_id --change-batch '{"Changes":[{"Action":"UPSERT","ResourceRecordSet":{"Name":"\*.eks.caiogomes.me.","Type":"CNAME","TTL":300,"ResourceRecords":[{"Value":"'${alb_dns}'"}]}}]}'
+          aws route53 change-resource-record-sets --hosted-zone-id $hosted_zone_id --change-batch '{"Changes":[{"Action":"UPSERT","ResourceRecordSet":{"Name":"*.eks.caiogomes.me.","Type":"CNAME","TTL":300,"ResourceRecords":[{"Value":"'${alb_dns}'"}]}}]}'
 
       - name: set argocd admin password
         run: |
