@@ -88,10 +88,13 @@ jobs:
         run: |
           ## Get the ALB ARN
           alb_arn=$(aws elbv2 describe-load-balancers --region ${{ secrets.AWS_REGION }} | jq -r '.LoadBalancers[].LoadBalancerArn' | xargs -I {} aws --region ${{ secrets.AWS_REGION }} elbv2 describe-tags --resource-arns {} --query "TagDescriptions[?Tags[?Key=='ingress.k8s.aws/stack' &&Value=='eks-lab-ingress']].ResourceArn" --output text)
+          echo "ALB ARN: $alb_arn"
           ## Get the ALB DNS Name
           alb_dns=$(aws elbv2 describe-load-balancers --region ${{ secrets.AWS_REGION }} --query "LoadBalancers[?LoadBalancerArn=='${alb_arn}'].DNSName" --output text)
+          echo "ALB DNS: $alb_dns"
           ## Get hosted zone id
           hosted_zone_id=$(aws route53 list-hosted-zones --query "HostedZones[?Name=='caiogomes.me.'].Id" --output text)
+          echo "Hosted Zone ID: $hosted_zone_id"
           ## Set the DNS record to the ALB DNS Name
           aws route53 change-resource-record-sets --hosted-zone-id $hosted_zone_id --change-batch '{"Changes":[{"Action":"UPSERT","ResourceRecordSet":{"Name":"*.eks.caiogomes.me.","Type":"CNAME","TTL":300,"ResourceRecords":[{"Value":"'${alb_dns}'"}]}}]}'
 
