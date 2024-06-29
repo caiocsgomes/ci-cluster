@@ -49,6 +49,7 @@ jobs:
       uses: actions/checkout@v4
 
     - name: delete cluster app of apps
+      continue-on-error: true
       run: kubectl delete -f kubernetes/app-of-apps.yaml
 
     - name: terraform init
