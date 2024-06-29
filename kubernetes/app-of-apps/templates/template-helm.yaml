@@ -27,6 +27,6 @@ spec:
       selfHeal: true
     syncOptions:
       - CreateNamespace=true
-      - ServerSideApply=true
+      - ServerSideApply=true #https://www.arthurkoziel.com/fixing-argocd-crd-too-long-error/, https://www.howtogeek.com/devops/what-is-kubernetes-server-side-apply-ssa/
 ---
 {{- end }}
