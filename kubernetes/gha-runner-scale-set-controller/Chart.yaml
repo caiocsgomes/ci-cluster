@@ -1,0 +1,10 @@
+apiVersion: v2
+name: gha-runner-scale-set-controller
+description: GitHub Actions Runner Scale Set Controller Helm chart for Kubernetes
+type: application
+version: 0.1.0
+appVersion: 1.0
+dependencies:
+- name: gha-runner-scale-set-controller
+  version: 0.9.3
+  repository: oci://ghcr.io/actions/actions-runner-controller-charts/gha-runner-scale-set-controller
