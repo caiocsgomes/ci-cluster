@@ -3,11 +3,11 @@ resource "aws_secretsmanager_secret" "gha_app_self_hosted_runner" {
 }
 
 variable "gha_app_self_hosted_runner_secret" {
-  default = object({
+  default = {
     github_app_id = "github_app_id"
     github_app_installation_id = "github_app_installation_id"
     github_app_private_key = "github_app_private_key"
-  })
+  }
   type = map(string)
 }
 
