@@ -48,22 +48,8 @@ jobs:
     - name: checkout code
       uses: actions/checkout@v4
 
-    - name: install cluster app of apps
+    - name: delete cluster app of apps
       run: kubectl delete -f kubernetes/app-of-apps.yaml
-
-    - name: verify if all apps are synced
-      run: |
-        while true; do
-          sync_status=`(kubectl -n argocd get Application -o=jsonpath='{.items[*].status.sync.status}')`
-          for status in $sync_status; do
-            if [ "$status" != "Synced" ]; then
-              echo "Not all apps are synced, waiting 10 seconds"
-              sleep 10
-              continue 2
-            fi
-            break 2
-          done
-        done
 
     - name: terraform init
       run: terraform init
