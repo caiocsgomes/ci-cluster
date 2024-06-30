@@ -6,7 +6,9 @@ charts:
 - name: aws-load-balancer-controller
   sync_wave: "-1"
 - name: gha-runner-scale-set-controller
+  sync_wave: "1"
 - name: external-secrets
   sync_wave: "-1"
 manifests:
 - name: argocd
+- name: secrets

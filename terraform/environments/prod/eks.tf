@@ -35,7 +35,7 @@ module "eks" {
   cluster_ip_family          = "ipv4"
   # create_cni_ipv6_iam_policy = true
 
-  enable_cluster_creator_admin_permissions = true
+  # enable_cluster_creator_admin_permissions = true
 
   # https://docs.aws.amazon.com/eks/latest/userguide/grant-k8s-access.html
   # https://fixit-xdu.medium.com/aws-eks-access-entry-4a7e25ed6c3a

@@ -249,7 +249,7 @@ resource "aws_iam_policy" "load_balancer_controller_iam_policy" {
   )
 }
 
-module "iam_eks_role" {
+module "iam_eks_role_load_balancer_controller" {
   source    = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks"
   role_name = "aws-load-balancer-controller"
 
@@ -265,3 +265,40 @@ module "iam_eks_role" {
   }
 }
 
+## External secrets IAM Role
+resource "aws_iam_policy" "external_secrets_iam_policy" {
+  name        = "ExternalSecretsIAMPolicy"
+  path        = "/"
+  description = "IAM policy for the External Secrets Controller"
+
+  policy = jsonencode(
+    {
+      "Version" : "2012-10-17",
+      "Statement" : [
+        {
+          "Effect" : "Allow",
+          "Action" : [
+            "secretmanager:GetSecretValue",
+          ],
+          "Resource" : "*",
+        },
+      ]
+    }
+  )
+}
+
+module "iam_eks_role_external_secrets_controller" {
+  source    = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks"
+  role_name = "external-secrets-controller"
+
+  role_policy_arns = {
+    policy = aws_iam_policy.external_secrets_iam_policy.arn
+  }
+
+  oidc_providers = {
+    one = {
+      provider_arn               = module.eks.oidc_provider_arn
+      namespace_service_accounts = ["external-secrets:external-secrets-aws-irsa"]
+    }
+  }
+}
