@@ -1,5 +1,3 @@
-## TODO: Add cron to destroy every night
-## TODO: Add a check to see if the cluster is empty before destroying
 name: Terraform Destroy
 
 on:
@@ -29,19 +27,8 @@ jobs:
       with:
         submodules: 'true'
 
-    # - name: install kubectl
-    #   uses: azure/setup-kubectl@v1
-    #   with:
-    #     version: 'v1.29.0'
-    #
-    # - name: configure kubectl
-    #   run: |
-    #     aws eks update-kubeconfig --name ${{ secrets.EKS_CLUSTER_NAME }} --region ${{ secrets.AWS_REGION }}
-    #
-    # - name: delete app of apps
-    #   run: kubectl delete -f kubernetes/app-of-apps.yaml
-
     - name: configure kubectl
+      continue-on-error: true
       run: |
         aws eks update-kubeconfig --name ${{ secrets.EKS_CLUSTER_NAME }} --region ${{ secrets.AWS_REGION }}
 

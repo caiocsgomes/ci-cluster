@@ -1,3 +1,4 @@
+## TODO: Add logic to wait for ALB creation
 name: "Bootstrap Argo CD"
 on:
   workflow_run:
