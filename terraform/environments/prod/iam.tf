@@ -278,7 +278,7 @@ resource "aws_iam_policy" "external_secrets_iam_policy" {
         {
           "Effect" : "Allow",
           "Action" : [
-            "secretmanager:GetSecretValue",
+            "secretsmanager:GetSecretValue",
           ],
           "Resource" : "*",
         },

@@ -6,6 +6,8 @@ charts:
 - name: aws-load-balancer-controller
   sync_wave: "-1"
 - name: gha-runner-scale-set-controller
+  sync_wave: "0"
+- name: gha-runner-scale-set
   sync_wave: "1"
 - name: external-secrets
   sync_wave: "-1"
