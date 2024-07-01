@@ -33,3 +33,6 @@ override.tf.json
 .terraformrc
 terraform.rc
 *.lock.hcl
+
+# My files
+*.me
