@@ -2,7 +2,8 @@ TODO: Deploy github actions arc and runners mannually in the cluster
 TODO: Study OIDC
 TODO: read https://www.reddit.com/r/kubernetes/comments/18bkvql/how_to_run_deploy_script_after_cluster_creation/
 TODO: Study ingress
-TODO: Study sync policy
-TODO: Study prune policy
 TODO: Study how to delete apps before deleting infrastructure
 
+NEXT: Store argocd password in some vault and add to argo-secret declatatively
+NEXT: Add workflow to handle dns
+NEXT: Deploy github actions self hosted runners
