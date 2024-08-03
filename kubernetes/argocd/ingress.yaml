@@ -41,13 +41,13 @@ spec:
     - host: argocd.eks.caiogomes.me
       http:
         paths:
-          - path: /
-            backend:
-              service:
-                name: argogrpc
-                port:
-                  number: 443
-            pathType: Prefix
+          # - path: /
+          #   backend:
+          #     service:
+          #       name: argogrpc
+          #       port:
+          #         number: 443
+          #   pathType: Prefix
           - path: /
             backend:
               service:
