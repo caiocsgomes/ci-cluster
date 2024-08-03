@@ -39,22 +39,22 @@ module "eks" {
 
   # https://docs.aws.amazon.com/eks/latest/userguide/grant-k8s-access.html
   # https://fixit-xdu.medium.com/aws-eks-access-entry-4a7e25ed6c3a
-  access_entries = {
-    # One access entry with a policy associated
-    admin = {
-      kubernetes_groups = []
-      principal_arn     = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:user/caio"
-
-      policy_associations = {
-        single = {
-          policy_arn = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSClusterAdminPolicy"
-          access_scope = {
-            type = "cluster"
-          }
-        }
-      }
-    }
-  }
+  # access_entries = {
+    # # One access entry with a policy associated
+    # admin = {
+      # kubernetes_groups = []
+      # principal_arn     = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:user/caio"
+# 
+      # policy_associations = {
+        # single = {
+          # policy_arn = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSClusterAdminPolicy"
+          # access_scope = {
+            # type = "cluster"
+          # }
+        # }
+      # }
+    # }
+  # }
 
   cluster_addons = {
     coredns = {
