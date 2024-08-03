@@ -16,3 +16,4 @@ charts:
 manifests:
 - name: argocd
 - name: secrets
+- name: storage-classes

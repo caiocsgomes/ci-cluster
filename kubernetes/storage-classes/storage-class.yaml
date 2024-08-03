@@ -1,0 +1,18 @@
+# https://kubernetes.io/docs/concepts/storage/storage-classes/#aws-ebs
+# https://github.com/kubernetes-sigs/aws-ebs-csi-driver/blob/aeb6a026f0f509b2fd47b0b7aea0b9649930eafe/docs/parameters.md?plain=1#L40
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: ebs-sc
+provisioner: ebs.csi.aws.com
+volumeBindingMode: WaitForFirstConsumer
+parameters:
+  csi.storage.k8s.io/fstype: ext4
+  type: gp3
+  iopsPerGB: "3000"
+  encrypted: "true"
+allowedTopologies:
+- matchLabelExpressions:
+  - key: topology.ebs.csi.aws.com/zone
+    values:
+    - us-east-1
