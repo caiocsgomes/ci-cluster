@@ -1,24 +1,24 @@
 ## https://argo-cd.readthedocs.io/en/stable/operator-manual/ingress/#aws-application-load-balancers-albs-and-classic-elb-http-mode
 ## https://kubernetes-sigs.github.io/aws-load-balancer-controller/v2.7/guide/ingress/annotations/
-apiVersion: v1
-kind: Service
-metadata:
-  annotations:
-    alb.ingress.kubernetes.io/backend-protocol-version: HTTP2 #This tells AWS to send traffic from the ALB using HTTP2. Can use GRPC as well if you want to leverage GRPC specific features
-  labels:
-    app: argogrpc
-  name: argogrpc
-  namespace: argocd
-spec:
-  ports:
-    - name: "443"
-      port: 443
-      protocol: TCP
-      targetPort: 8080
-  selector:
-    app.kubernetes.io/name: argocd-server
-  sessionAffinity: None
-  type: NodePort
+# apiVersion: v1
+# kind: Service
+# metadata:
+#   annotations:
+#     alb.ingress.kubernetes.io/backend-protocol-version: HTTP2 #This tells AWS to send traffic from the ALB using HTTP2. Can use GRPC as well if you want to leverage GRPC specific features
+#   labels:
+#     app: argogrpc
+#   name: argogrpc
+#   namespace: argocd
+# spec:
+#   ports:
+#     - name: "443"
+#       port: 443
+#       protocol: TCP
+#       targetPort: 8080
+#   selector:
+#     app.kubernetes.io/name: argocd-server
+#   sessionAffinity: None
+#   type: NodePort
 ---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
