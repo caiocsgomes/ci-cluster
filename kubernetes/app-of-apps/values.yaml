@@ -11,6 +11,8 @@ charts:
   sync_wave: "1"
 - name: external-secrets
   sync_wave: "-1"
+- name: aws-ebs-csi-driver
+  sync_wave: "-1"
 manifests:
 - name: argocd
 - name: secrets
