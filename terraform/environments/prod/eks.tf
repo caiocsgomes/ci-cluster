@@ -29,7 +29,7 @@ module "eks" {
 
   cluster_name                    = local.name
   cluster_version                 = local.cluster_version
-  cluster_endpoint_public_access  = false
+  cluster_endpoint_public_access  = true # This is necessary to access the cluster from outside the VPC, like github or locally
   cluster_endpoint_private_access = true
 
   # IPV6
