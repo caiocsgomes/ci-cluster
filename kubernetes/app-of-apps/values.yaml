@@ -13,6 +13,8 @@ charts:
   sync_wave: "-1"
 - name: aws-ebs-csi-driver
   sync_wave: "-1"
+- name: kube-prometheus-stack
+  sync_wave: "0"
 manifests:
 - name: argocd
 - name: secrets
