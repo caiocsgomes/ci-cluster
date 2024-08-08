@@ -27,34 +27,16 @@ data "aws_eks_cluster_auth" "default" {
 module "eks" {
   source = "terraform-aws-modules/eks/aws"
 
-  cluster_name                   = local.name
-  cluster_version                = local.cluster_version
-  cluster_endpoint_public_access = true
+  cluster_name                    = local.name
+  cluster_version                 = local.cluster_version
+  cluster_endpoint_public_access  = false
+  cluster_endpoint_private_access = true
 
   # IPV6
-  cluster_ip_family          = "ipv4"
+  cluster_ip_family = "ipv4"
   # create_cni_ipv6_iam_policy = true
 
   enable_cluster_creator_admin_permissions = true
-
-  # https://docs.aws.amazon.com/eks/latest/userguide/grant-k8s-access.html
-  # https://fixit-xdu.medium.com/aws-eks-access-entry-4a7e25ed6c3a
-  # access_entries = {
-    # # One access entry with a policy associated
-    # admin = {
-      # kubernetes_groups = []
-      # principal_arn     = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:user/caio"
-# 
-      # policy_associations = {
-        # single = {
-          # policy_arn = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSClusterAdminPolicy"
-          # access_scope = {
-            # type = "cluster"
-          # }
-        # }
-      # }
-    # }
-  # }
 
   cluster_addons = {
     coredns = {
@@ -69,6 +51,7 @@ module "eks" {
       configuration_values = jsonencode({
         env = {
           # Reference docs https://docs.aws.amazon.com/eks/latest/userguide/cni-increase-ip-addresses.html
+          # This will deliver a /28 prefix for each secondary ipv4 in the eni
           ENABLE_PREFIX_DELEGATION = "true"
           WARM_PREFIX_TARGET       = "1"
         }
@@ -77,22 +60,28 @@ module "eks" {
   }
 
   vpc_id                   = module.vpc.vpc_id
-  subnet_ids               = module.vpc.private_subnets
-  control_plane_subnet_ids = module.vpc.intra_subnets
+  subnet_ids               = module.vpc.private_subnets # where node groups run
+  control_plane_subnet_ids = module.vpc.intra_subnets   # where ENIs from control plane are deployed
 
   eks_managed_node_group_defaults = {
-    ami_type       = "AL2_x86_64"
     instance_types = ["t3.medium"]
   }
 
   eks_managed_node_groups = {
-    bottlerocket_default = {
+    bottlerocket = {
       # By default, the module creates a launch template to ensure tags are propagated to instances, etc.,
       # so we need to disable it to use the default template provided by the AWS EKS managed node group service
       use_custom_launch_template = false
 
-      ami_type = "BOTTLEROCKET_x86_64"
-      platform = "bottlerocket"
+      desired_size = 1
+      max_size     = 2
+      ami_type     = "BOTTLEROCKET_x86_64"
+
+      create_iam_role = true
+      iam_role_name   = "aws-eks-cluster-instance-role"
+      iam_role_additional_policies = {
+        AmazonSSMManagedInstanceCore = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
+      }
     }
   }
   tags = local.tags
@@ -126,10 +115,10 @@ module "vpc" {
   # intra_subnet_ipv6_prefixes                     = [6, 7, 8]
   # intra_subnet_assign_ipv6_address_on_creation   = true
 
+  # https://docs.aws.amazon.com/eks/latest/userguide/network-load-balancing.html#subnet-tagging-for-load-balancers
   public_subnet_tags = {
     "kubernetes.io/role/elb" = 1
   }
-
   private_subnet_tags = {
     "kubernetes.io/role/internal-elb" = 1
   }
