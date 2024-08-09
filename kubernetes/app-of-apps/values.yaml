@@ -16,6 +16,6 @@ charts:
 - name: kube-prometheus-stack
   sync_wave: "0"
 manifests:
-- name: argocd
+- name: ingress
 - name: secrets
 - name: storage-classes

@@ -37,9 +37,8 @@ jobs:
     - name: checkout code
       uses: actions/checkout@v4
 
-    - name: delete cluster app of apps
-      continue-on-error: true
-      run: kubectl delete -f kubernetes/app-of-apps.yaml
+    - name: delete resources created not managed by terraform
+      run: kubectl destroy -f kubernetes/ingress
 
     - name: terraform init
       run: terraform init
