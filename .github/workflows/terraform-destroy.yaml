@@ -38,7 +38,7 @@ jobs:
       uses: actions/checkout@v4
 
     - name: delete resources created not managed by terraform
-      run: kubectl destroy -f kubernetes/ingress
+      run: kubectl delete -f kubernetes/ingress
 
     - name: terraform init
       run: terraform init
