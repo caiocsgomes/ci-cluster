@@ -4,17 +4,17 @@ destination:
   server: https://kubernetes.default.svc
 charts:
 - name: aws-load-balancer-controller
-  sync_wave: "-1"
+  sync_wave: "0"
 - name: gha-runner-scale-set-controller
-  sync_wave: "0"
-- name: gha-runner-scale-set
   sync_wave: "1"
+- name: gha-runner-scale-set
+  sync_wave: "2"
 - name: external-secrets
-  sync_wave: "-1"
-- name: aws-ebs-csi-driver
-  sync_wave: "-1"
-- name: kube-prometheus-stack
   sync_wave: "0"
+- name: aws-ebs-csi-driver
+  sync_wave: "0"
+- name: kube-prometheus-stack
+  sync_wave: "1"
 - name: karpenter
   sync_wave: "-1"
 manifests:
