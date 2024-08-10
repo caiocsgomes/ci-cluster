@@ -84,6 +84,19 @@ module "eks" {
       }
     }
   }
+
+  fargate_profiles = {
+    fargate_profile = {
+      selectors = [
+        {
+          namespace = "fargate"
+        },
+        {
+          namespace = "karpenter"
+        }
+      ]
+    }
+  }
   tags = local.tags
 }
 
