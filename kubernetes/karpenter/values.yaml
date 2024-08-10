@@ -165,7 +165,7 @@ karpenter:
     # -- Cluster CA bundle for TLS configuration of provisioned nodes. If not set, this is taken from the controller's TLS configuration for the API server.
     clusterCABundle: ""
     # -- Cluster name.
-    clusterName: ""
+    clusterName: "aws-eks-cluster"
     # -- Cluster endpoint. If not set, will be discovered during startup (EKS only)
     clusterEndpoint: ""
     # -- If true then assume we can't reach AWS services which don't have a VPC endpoint
