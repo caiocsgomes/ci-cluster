@@ -39,7 +39,10 @@ jobs:
 
     - name: delete resources created not managed by terraform
       continue-on-error: true
-      run: kubectl delete -f kubernetes/ingress
+      run: |
+        kubectl delete -f kubernetes/ingress # deletes ALB created by aws-load-balancer-controller
+        kubectl delete nodeclaims --all # deletes nodes created by karpenter
+        sleep 60
 
     - name: terraform init
       run: terraform init
