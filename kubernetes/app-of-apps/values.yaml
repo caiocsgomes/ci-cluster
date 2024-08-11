@@ -15,8 +15,6 @@ charts:
   sync_wave: "0"
 - name: kube-prometheus-stack
   sync_wave: "1"
-- name: karpenter
-  sync_wave: "-1"
 manifests:
 - name: ingress
 - name: secrets
