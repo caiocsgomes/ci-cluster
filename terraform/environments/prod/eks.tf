@@ -239,7 +239,8 @@ resource "kubectl_manifest" "karpenter_node_pool" {
               operator: Gt
               values: ["2"]
       limits:
-        cpu: 1000
+        cpu: 50
+        memory: 20Gi
       disruption:
         consolidationPolicy: WhenEmpty
         consolidateAfter: 30s
