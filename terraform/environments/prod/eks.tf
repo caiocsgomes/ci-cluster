@@ -59,12 +59,6 @@ data "aws_eks_cluster_auth" "default" {
   name = module.eks.cluster_name
 }
 
-# provider "kubernetes" {
-#   host                   = module.eks.cluster_endpoint
-#   cluster_ca_certificate = base64decode(module.eks.cluster_certificate_authority_data)
-#   token                  = data.aws_eks_cluster_auth.default.token
-# }
-
 module "eks" {
   source = "terraform-aws-modules/eks/aws"
 
@@ -109,13 +103,18 @@ module "eks" {
     instance_types = ["t3.medium"]
   }
   eks_managed_node_groups = {
-    karpenter = {
+    managed_node_group = {
       ami_type       = "AL2023_x86_64_STANDARD"
       instance_types = ["t3.medium"]
 
-      min_size     = 2
-      max_size     = 2
-      desired_size = 2
+      subnet_ids   = module.vpc.private_subnets
+      min_size     = 1
+      max_size     = 1
+      desired_size = 1
+
+      # This will make them being spread across different AZs
+      create_placement_group   = true
+      placement_group_strategy = "spread"
 
       taints = {
         # This Taint aims to keep just EKS Addons and Karpenter running on this MNG
