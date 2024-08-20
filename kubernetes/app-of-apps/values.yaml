@@ -1,4 +1,4 @@
-github_repo: https://github.com/caiocsgomes/aws-eks-cluster
+github_repo: https://github.com/caiocsgomes/ci-cluster
 base_path: kubernetes
 destination:
   server: https://kubernetes.default.svc

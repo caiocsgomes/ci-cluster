@@ -116,7 +116,7 @@ aws-load-balancer-controller:
   enableCertManager: false
 
   # The name of the Kubernetes cluster. A non-empty value is required
-  clusterName: arn:aws:eks:us-east-1:322620855520:cluster/aws-eks-cluster
+  clusterName: arn:aws:eks:us-east-1:322620855520:cluster/ci-cluster
 
   # cluster contains configurations specific to the kubernetes cluster
   cluster:

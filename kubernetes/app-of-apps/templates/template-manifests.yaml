@@ -12,7 +12,7 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: https://github.com/caiocsgomes/aws-eks-cluster
+    repoURL: https://github.com/caiocsgomes/ci-cluster
     path: {{ $.Values.base_path }}/{{ $manifest.name }}
     targetRevision: HEAD
   destination:

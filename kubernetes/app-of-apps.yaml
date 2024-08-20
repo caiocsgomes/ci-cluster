@@ -12,7 +12,7 @@ spec:
     server: 'https://kubernetes.default.svc'
   source:
     path: kubernetes/app-of-apps
-    repoURL: https://github.com/caiocsgomes/aws-eks-cluster
+    repoURL: https://github.com/caiocsgomes/ci-cluster
     targetRevision: HEAD
   project: default
   syncPolicy:
