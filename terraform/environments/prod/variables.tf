@@ -45,6 +45,6 @@ variable "disk_size" {
 variable "eks_tags" {
   type = map(string)
   default = {
-    Name = "aws-eks-cluster"
+    Name = "ci-cluster"
   }
 }

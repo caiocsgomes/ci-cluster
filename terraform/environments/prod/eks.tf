@@ -1,5 +1,5 @@
 locals {
-  name            = "aws-eks-cluster"
+  name            = "ci-cluster"
   cluster_version = "1.29"
   region          = "us-east-1"
 
@@ -7,7 +7,7 @@ locals {
   azs      = slice(data.aws_availability_zones.available.names, 0, 3)
 
   tags = {
-    project = "aws-eks-cluster"
+    project = "ci-cluster"
   }
 }
 
