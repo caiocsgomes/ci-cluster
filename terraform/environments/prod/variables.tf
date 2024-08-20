@@ -1,6 +1,6 @@
 ## Project wide variables
 variable "project_name" {
-  default = "aws-eks-cluster"
+  default = "ci-cluster"
 }
 variable "region" {
   default = "us-east-1"
