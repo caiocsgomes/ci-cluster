@@ -1,6 +1,6 @@
 locals {
   name            = "ci-cluster"
-  cluster_version = "1.29"
+  cluster_version = "1.30"
   region          = "us-east-1"
 
   vpc_cidr = "10.0.0.0/16"
@@ -69,15 +69,20 @@ module "eks" {
 
   # IPV6
   cluster_ip_family = "ipv4"
-  # create_cni_ipv6_iam_policy = true
+  # create_chi_ipv6_iam_policy = true
 
   enable_cluster_creator_admin_permissions = true
 
   cluster_addons = {
     coredns = {
       most_recent = true
+      configuration_values = jsonencode({
+        computeType = "Fargate"
+      })
     }
-    eks-pod-identity-agent = {}
+    # eks-pod-identity-agent = {
+    #   most_recent = true
+    # }
     kube-proxy = {
       most_recent = true
     }
@@ -99,33 +104,15 @@ module "eks" {
   subnet_ids               = module.vpc.private_subnets # where node groups run
   control_plane_subnet_ids = module.vpc.intra_subnets   # where ENIs from control plane are deployed
 
-  eks_managed_node_group_defaults = {
-    instance_types = ["t3.medium"]
-  }
-  eks_managed_node_groups = {
-    managed_node_group = {
-      ami_type       = "AL2023_x86_64_STANDARD"
-      instance_types = ["t3.medium"]
-
-      subnet_ids   = module.vpc.private_subnets
-      min_size     = 1
-      max_size     = 1
-      desired_size = 1
-
-      # This will make them being spread across different AZs
-      create_placement_group   = true
-      placement_group_strategy = "spread"
-
-      taints = {
-        # This Taint aims to keep just EKS Addons and Karpenter running on this MNG
-        # The pods that do not tolerate this taint should run on nodes created by Karpenter
-        addons = {
-          key    = "CriticalAddonsOnly"
-          value  = "true"
-          effect = "NO_SCHEDULE"
-        },
-      }
+  fargate_profiles = {
+    kube-system = {
+      selectors = [
+        { namespace = "kube-system" }
+      ]
     }
+  }
+  fargate_profile_defaults = {
+    iam_role_additional_policies = { CloudWatchAgentServerPolicy : "arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy" }
   }
   node_security_group_tags = merge(local.tags, {
     # NOTE - if creating multiple security groups with this module, only tag the
@@ -145,8 +132,14 @@ module "karpenter" {
 
   cluster_name = module.eks.cluster_name
 
-  enable_pod_identity             = true
-  create_pod_identity_association = true
+  depends_on = [module.eks]
+
+  enable_pod_identity             = false # This is not available yet on Fargate
+  create_pod_identity_association = false
+  enable_irsa                     = true
+  irsa_namespace_service_accounts = ["kube-system:karpenter"]
+  irsa_oidc_provider_arn          = module.eks.oidc_provider_arn
+  access_entry_type               = "FARGATE_LINUX"
 
   # Used to attach additional IAM policies to the Karpenter node IAM role
   node_iam_role_additional_policies = {
@@ -171,9 +164,13 @@ resource "helm_release" "karpenter" {
 
   values = [
     <<-EOT
-    replicas: 2
+    replicas: 1
+    dnsPolicy: Default
     serviceAccount:
-      name: ${module.karpenter.service_account}
+      create: true
+      name: karpenter
+      annotations:
+        eks.amazonaws.com/role-arn: ${module.karpenter.iam_role_arn}
     settings:
       clusterName: ${module.eks.cluster_name}
       clusterEndpoint: ${module.eks.cluster_endpoint}
@@ -186,6 +183,10 @@ resource "helm_release" "karpenter" {
         limits:
           cpu: 1
           memory: 1Gi
+    tolerations:
+      - key: eks.amazonaws.com/compute-type
+        operator: Equal
+        value: fargate
     EOT
   ]
 }
@@ -251,6 +252,65 @@ resource "kubectl_manifest" "karpenter_node_pool" {
   ]
 }
 
+resource "kubectl_manifest" "aws_observability" {
+  yaml_body = <<-YAML
+    kind: Namespace
+    apiVersion: v1
+    metadata:
+      name: aws-observability
+      labels:
+        aws-observability: enabled
+  YAML
+
+  depends_on = [
+    module.eks
+  ]
+}
+
+resource "kubectl_manifest" "aws_observability_cf" {
+  yaml_body = <<-YAML
+    kind: ConfigMap
+    apiVersion: v1
+    metadata:
+      name: aws-logging
+      namespace: aws-observability
+    data:
+      flb_log_cw: "false"  # Set to true to ship Fluent Bit process logs to CloudWatch.
+      filters.conf: |
+        [FILTER]
+            Name parser
+            Match *
+            Key_name log
+            Parser crio
+        [FILTER]
+            Name kubernetes
+            Match kube.*
+            Merge_Log On
+            Keep_Log Off
+            Buffer_Size 0
+            Kube_Meta_Cache_TTL 300s
+      output.conf: |
+        [OUTPUT]
+            Name cloudwatch_logs
+            Match   kube.*
+            region us-east-1
+            log_group_name /aws/eks/ci-cluster/cluster
+            log_stream_prefix from-fluent-bit-
+            log_retention_days 60
+            auto_create_group true
+      parsers.conf: |
+        [PARSER]
+            Name crio
+            Format Regex
+            Regex ^(?<time>[^ ]+) (?<stream>stdout|stderr) (?<logtag>P|F) (?<log>.*)$
+            Time_Key    time
+            Time_Format %Y-%m-%dT%H:%M:%S.%L%z
+  YAML
+
+  depends_on = [
+    kubectl_manifest.aws_observability
+  ]
+}
 ################################################################################
 # Supporting Resources
 ################################################################################
