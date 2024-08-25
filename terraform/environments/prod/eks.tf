@@ -77,7 +77,8 @@ module "eks" {
     coredns = {
       most_recent = true
       configuration_values = jsonencode({
-        computeType = "Fargate"
+        computeType = "Fargate",
+        replicaCount = 1,
       })
     }
     # eks-pod-identity-agent = {
@@ -139,7 +140,7 @@ module "karpenter" {
   enable_irsa                     = true
   irsa_namespace_service_accounts = ["kube-system:karpenter"]
   irsa_oidc_provider_arn          = module.eks.oidc_provider_arn
-  access_entry_type               = "FARGATE_LINUX"
+  # access_entry_type               = "FARGATE_LINUX"
 
   # Used to attach additional IAM policies to the Karpenter node IAM role
   node_iam_role_additional_policies = {
