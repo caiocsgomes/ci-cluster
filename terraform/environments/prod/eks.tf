@@ -77,7 +77,7 @@ module "eks" {
     coredns = {
       most_recent = true
       configuration_values = jsonencode({
-        computeType = "Fargate",
+        computeType  = "Fargate",
         replicaCount = 1,
       })
     }
@@ -113,8 +113,32 @@ module "eks" {
     }
   }
   fargate_profile_defaults = {
+    create_iam_role              = true # This is the Pod Exection role (https://docs.aws.amazon.com/eks/latest/userguide/pod-execution-role.html) used by fargate agent, not pod inside fargate
     iam_role_additional_policies = { CloudWatchAgentServerPolicy : "arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy" }
+    subnet_ids                   = module.vpc.private_subnets
   }
+
+  # # create_cluster_security_group = false
+  # # create_node_security_group = false
+  # cluster_security_group_additional_rules = {
+  #   ingress_dns_tcp = {
+  #     description                = "Allow DNS TCP for CoreDNS running on Fargate"
+  #     protocol                   = "tcp"
+  #     from_port                  = 53
+  #     to_port                    = 53
+  #     type                       = "ingress"
+  #     source_node_security_group = true
+  #   },
+  #   ingress_dns_udp = {
+  #     description                = "Allow DNS UDP for CoreDNS running on Fargate"
+  #     protocol                   = "udp"
+  #     from_port                  = 53
+  #     to_port                    = 53
+  #     type                       = "ingress"
+  #     source_node_security_group = true
+  #   }
+  # }
+
   node_security_group_tags = merge(local.tags, {
     # NOTE - if creating multiple security groups with this module, only tag the
     # security group that Karpenter should utilize with the following tag
@@ -124,6 +148,26 @@ module "eks" {
   tags = local.tags
 }
 
+## CoreDNS is running on Fargate. Fargate by defualt uses the eks cluster primary security group.
+resource "aws_security_group_rule" "ingress_dns_tcp" {
+  security_group_id        = module.eks.cluster_primary_security_group_id
+  description              = "Allow DNS TCP for CoreDNS running on Fargate"
+  protocol                 = "tcp"
+  from_port                = 53
+  to_port                  = 53
+  type                     = "ingress"
+  source_security_group_id = module.eks.node_security_group_id
+}
+
+resource "aws_security_group_rule" "ingress_dns_udp" {
+  security_group_id        = module.eks.cluster_primary_security_group_id
+  description              = "Allow DNS UDP for CoreDNS running on Fargate"
+  protocol                 = "udp"
+  from_port                = 53
+  to_port                  = 53
+  type                     = "ingress"
+  source_security_group_id = module.eks.node_security_group_id
+}
 ################################################################################
 # Karpenter
 ################################################################################
