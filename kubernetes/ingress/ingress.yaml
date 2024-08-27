@@ -95,3 +95,35 @@ spec:
   tls:
     - hosts:
         - grafana.eks.caiogomes.me
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  namespace: kube-prometheus-stack
+  name: kube-prometheus-stack-alertmanager
+  annotations:
+    alb.ingress.kubernetes.io/scheme: internet-facing
+    alb.ingress.kubernetes.io/target-type: ip
+    alb.ingress.kubernetes.io/group.name: ci-cluster-ingress
+    alb.ingress.kubernetes.io/healthcheck-protocol: HTTP
+    alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:us-east-1:322620855520:certificate/ec9dfe04-5253-4bd6-a594-c88e69053ed2
+    alb.ingress.kubernetes.io/listen-ports: '[{"HTTPS":443}]'
+    alb.ingress.kubernetes.io/backend-protocol: HTTP
+    alb.ingress.kubernetes.io/ssl-redirect: '443'
+    alb.ingress.kubernetes.io/success-codes: 200-302
+spec:
+  ingressClassName: alb
+  rules:
+    - host: grafana.eks.caiogomes.me
+      http:
+        paths:
+          - path: /
+            backend:
+              service:
+                name: kube-prometheus-stack-alertmanager
+                port:
+                  number: 9093
+            pathType: Prefix
+  tls:
+    - hosts:
+        - alertmanager.eks.caiogomes.me
