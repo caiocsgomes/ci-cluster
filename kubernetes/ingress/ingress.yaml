@@ -114,7 +114,7 @@ metadata:
 spec:
   ingressClassName: alb
   rules:
-    - host: grafana.eks.caiogomes.me
+    - host: alertmanager.eks.caiogomes.me
       http:
         paths:
           - path: /
