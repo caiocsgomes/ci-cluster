@@ -1,34 +1,13 @@
-## https://argo-cd.readthedocs.io/en/stable/operator-manual/ingress/#aws-application-load-balancers-albs-and-classic-elb-http-mode
-## https://kubernetes-sigs.github.io/aws-load-balancer-controller/v2.7/guide/ingress/annotations/
-# apiVersion: v1
-# kind: Service
-# metadata:
-#   annotations:
-#     alb.ingress.kubernetes.io/backend-protocol-version: HTTP2 #This tells AWS to send traffic from the ALB using HTTP2. Can use GRPC as well if you want to leverage GRPC specific features
-#   labels:
-#     app: argogrpc
-#   name: argogrpc
-#   namespace: argocd
-# spec:
-#   ports:
-#     - name: "443"
-#       port: 443
-#       protocol: TCP
-#       targetPort: 8080
-#   selector:
-#     app.kubernetes.io/name: argocd-server
-#   sessionAffinity: None
-#   type: NodePort
----
+## https://kubernetes-sigs.github.io/aws-load-balancer-controller/latest/how-it-works/
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  namespace: argocd
-  name: argocd-server
+  namespace: kube-system
+  name: cluster-ingress
   annotations:
     alb.ingress.kubernetes.io/scheme: internet-facing
     alb.ingress.kubernetes.io/target-type: ip
-    alb.ingress.kubernetes.io/group.name: eks-lab-ingress
+    alb.ingress.kubernetes.io/group.name: ci-cluster-ingress
     alb.ingress.kubernetes.io/healthcheck-protocol: HTTPS
     alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:us-east-1:322620855520:certificate/ec9dfe04-5253-4bd6-a594-c88e69053ed2
     alb.ingress.kubernetes.io/listen-ports: '[{"HTTPS":443}]'
@@ -39,23 +18,26 @@ metadata:
 spec:
   ingressClassName: alb
   rules:
-    - host: argocd.eks.caiogomes.me
-      http:
-        paths:
-          # - path: /
-          #   backend:
-          #     service:
-          #       name: argogrpc
-          #       port:
-          #         number: 443
-          #   pathType: Prefix
-          - path: /
-            backend:
-              service:
-                name: argocd-server
-                port:
-                  number: 443
-            pathType: Prefix
+  - host: argocd.eks.caiogomes.me
+    http:
+      paths:
+        - path: /
+          backend:
+            service:
+              name: argocd-server
+              port:
+                number: 443
+          pathType: Prefix
+  - host: prometheus.eks.caiogomes.me
+    http:
+      paths:
+        - path: /
+          backend:
+            service:
+              name: kube-prometheus-stack-prometheus
+              port:
+                number: 9090
+          pathType: Prefix
   tls:
     - hosts:
         - argocd.eks.caiogomes.me
