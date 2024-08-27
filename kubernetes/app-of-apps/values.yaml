@@ -8,7 +8,7 @@ charts:
 - name: gha-runner-scale-set-controller
   sync_wave: "1"
 - name: gha-runner-scale-set
-  sync_wave: "2"
+  sync_wave: "3"
 - name: external-secrets
   sync_wave: "0"
 - name: aws-ebs-csi-driver
@@ -17,5 +17,8 @@ charts:
   sync_wave: "1"
 manifests:
 - name: ingress
+  sync_wave: "3"
 - name: secrets
+  sync_wave: "2"
 - name: storage-classes
+  sync_wave: "1"
