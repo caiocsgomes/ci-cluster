@@ -90,7 +90,7 @@ spec:
               service:
                 name: kube-prometheus-stack-grafana
                 port:
-                  number: 9093
+                  number: 80
             pathType: Prefix
   tls:
     - hosts:
