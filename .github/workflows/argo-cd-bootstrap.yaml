@@ -89,12 +89,12 @@ jobs:
       - name: set dns record to alb
         run: |
           ## Get the ALB ARN
-          alb_arn=$(aws elbv2 describe-load-balancers --region ${{ secrets.AWS_REGION }} | jq -r '.LoadBalancers[].LoadBalancerArn' | xargs -I {} aws --region ${{ secrets.AWS_REGION }} elbv2 describe-tags --resource-arns {} --query "TagDescriptions[?Tags[?Key=='ingress.k8s.aws/stack' &&Value=='eks-lab-ingress']].ResourceArn" --output text)
+          alb_arn=$(aws elbv2 describe-load-balancers --region ${{ secrets.AWS_REGION }} | jq -r '.LoadBalancers[].LoadBalancerArn' | xargs -I {} aws --region ${{ secrets.AWS_REGION }} elbv2 describe-tags --resource-arns {} --query "TagDescriptions[?Tags[?Key=='ingress.k8s.aws/stack' &&Value=='ci-cluster-ingress']].ResourceArn" --output text)
           while true; do
             if [ -z "$alb_arn" ]; then
               echo "ALB not found, waiting 10 seconds"
               sleep 10
-              alb_arn=$(aws elbv2 describe-load-balancers --region ${{ secrets.AWS_REGION }} | jq -r '.LoadBalancers[].LoadBalancerArn' | xargs -I {} aws --region ${{ secrets.AWS_REGION }} elbv2 describe-tags --resource-arns {} --query "TagDescriptions[?Tags[?Key=='ingress.k8s.aws/stack' &&Value=='eks-lab-ingress']].ResourceArn" --output text)
+              alb_arn=$(aws elbv2 describe-load-balancers --region ${{ secrets.AWS_REGION }} | jq -r '.LoadBalancers[].LoadBalancerArn' | xargs -I {} aws --region ${{ secrets.AWS_REGION }} elbv2 describe-tags --resource-arns {} --query "TagDescriptions[?Tags[?Key=='ingress.k8s.aws/stack' &&Value=='ci-cluster-ingress']].ResourceArn" --output text)
               continue
             fi
             break
