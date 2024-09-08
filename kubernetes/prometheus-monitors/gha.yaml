@@ -1,0 +1,23 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PodMonitor
+metadata:
+  name: gha-controller-monitor
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/component: controller-manager
+      app.kubernetes.io/part-of: gha-rs-controller
+  podMetricsEndpoints:
+  - port: metrics
+---
+apiVersion: monitoring.coreos.com/v1
+kind: PodMonitor
+metadata:
+  name: gha-listener-monitor
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/component: runner-scale-set-listener
+      app.kubernetes.io/part-of: gha-runner-scale-set
+  podMetricsEndpoints:
+  - port: metrics

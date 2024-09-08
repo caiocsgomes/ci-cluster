@@ -14,7 +14,7 @@ charts:
 - name: aws-ebs-csi-driver
   sync_wave: "0"
 - name: kube-prometheus-stack
-  sync_wave: "1"
+  sync_wave: "0"
 manifests:
 - name: ingress
   sync_wave: "3"
@@ -22,3 +22,8 @@ manifests:
   sync_wave: "2"
 - name: storage-classes
   sync_wave: "1"
+- name: prometheus-monitors
+  sync_wave: "4"
+
+
+## sync_wave logic: 0-Basic functionality drivers and controllers -> 1-Apps controllers -> 2-Secrets and config -> 3-Apps -> 4-Added functionality to apps
