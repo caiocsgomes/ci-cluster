@@ -90,10 +90,10 @@ gha-runner-scale-set-controller:
   ## This will disable metrics.
   ##
   ## To enable metrics, uncomment the following lines.
-  # metrics:
-  #   controllerManagerAddr: ":8080"
-  #   listenerAddr: ":8080"
-  #   listenerEndpoint: "/metrics"
+  metrics:
+    controllerManagerAddr: ":8080"
+    listenerAddr: ":8080"
+    listenerEndpoint: "/metrics"
 
   flags:
     ## Log level can be set here with one of the following values: "debug", "info", "warn", "error".

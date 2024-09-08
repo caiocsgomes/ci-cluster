@@ -81,7 +81,7 @@ kube-prometheus-stack:
       nodeExporterRecording: true
       prometheus: true
       prometheusOperator: true
-      windows: true
+      windows: false
 
     ## Reduce app namespace alert scope
     appNamespacesTarget: ".*"
@@ -2923,7 +2923,7 @@ kube-prometheus-stack:
     ## Set a Label Selector to filter watched thanosRuler
     thanosRulerInstanceSelector: ""
 
-    ## Set a Field Selector to filter watched secrets
+    ## Set a Field Selector to filter watched seks-lab-ingressecrets
     ##
     secretFieldSelector: "type!=kubernetes.io/dockercfg,type!=kubernetes.io/service-account-token,type!=helm.sh/release.v1"
 
