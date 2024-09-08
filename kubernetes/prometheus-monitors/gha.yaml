@@ -2,6 +2,7 @@ apiVersion: monitoring.coreos.com/v1
 kind: PodMonitor
 metadata:
   name: gha-controller-monitor
+  namespace: gha-runner-scale-set-controller
 spec:
   selector:
     matchLabels:
@@ -14,6 +15,7 @@ apiVersion: monitoring.coreos.com/v1
 kind: PodMonitor
 metadata:
   name: gha-listener-monitor
+  namespace: gha-runner-scale-set-controller
 spec:
   selector:
     matchLabels:
