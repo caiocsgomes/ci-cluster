@@ -3,6 +3,8 @@ kind: PodMonitor
 metadata:
   name: gha-controller-monitor
   namespace: gha-runner-scale-set-controller
+  labels:
+    prometheus: monitor
 spec:
   selector:
     matchLabels:
@@ -16,6 +18,8 @@ kind: PodMonitor
 metadata:
   name: gha-listener-monitor
   namespace: gha-runner-scale-set-controller
+  labels:
+    prometheus: monitor
 spec:
   selector:
     matchLabels:
