@@ -6,7 +6,7 @@ on:
     branches:
       - main
     paths:
-      - 'terraform/**'
+      - "terraform/**"
       - .github/workflows/terraform-apply.yaml
 
   workflow_dispatch:
@@ -17,33 +17,27 @@ jobs:
   apply:
     runs-on: ubuntu-latest
     steps:
-    - name: configure aws credentials
-      uses: aws-actions/configure-aws-credentials@v3.0.1
-      with:
-        # role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
-        # role-session-name: GitHub_to_AWS_via_FederatedOIDC
-        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        aws-region: ${{ secrets.AWS_REGION }}
-    - id: install-aws-cli
-      uses: unfor19/install-aws-cli-action@v1
-      with:
-        version: 2                         # default
-        verbose: false                     # default
-        arch: amd64                        # allowed values: amd64, arm64
-    - name: verify aws  profile
-      run: |
-        aws sts get-caller-identity
-        aws configure list
-    - name: install terraform
-      uses: hashicorp/setup-terraform@v2
-    - name: checkout repository
-      uses: actions/checkout@v3
-      with:
-        submodules: 'true'
-    - name: terraform init
-      run: terraform init
-      working-directory: terraform/environments/prod
-    - name: terraform apply
-      run: terraform apply -auto-approve 
-      working-directory: terraform/environments/prod
+      - name: configure aws credentials
+        uses: aws-actions/configure-aws-credentials@v3.0.1
+        with:
+          # role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          # role-session-name: GitHub_to_AWS_via_FederatedOIDC
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+      - name: verify aws  profile
+        run: |
+          aws sts get-caller-identity
+          aws configure list
+      - name: install terraform
+        uses: hashicorp/setup-terraform@v2
+      - name: checkout repository
+        uses: actions/checkout@v3
+        with:
+          submodules: "true"
+      - name: terraform init
+        run: terraform init
+        working-directory: terraform/environments/prod
+      # - name: terraform apply
+      #   run: terraform apply -auto-approve
+      #   working-directory: terraform/environments/prod
