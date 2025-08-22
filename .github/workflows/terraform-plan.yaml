@@ -3,8 +3,8 @@ name: Terraform Plan
 on:
   pull_request:
     paths:
-    - 'terraform/**'
-    - .github/workflows/terraform-plan.yaml
+      - "terraform/**"
+      - .github/workflows/terraform-plan.yaml
   workflow_dispatch:
 
 permissions: write-all
@@ -13,66 +13,59 @@ jobs:
   plan:
     runs-on: ubuntu-latest
     steps:
-    - name: configure aws credentials
-      uses: aws-actions/configure-aws-credentials@v3.0.1
-      with:
-        # role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
-        # role-session-name: GitHub_to_AWS_via_FederatedOIDC
-        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        aws-region: ${{ secrets.AWS_REGION }}
-    - id: install-aws-cli
-      uses: unfor19/install-aws-cli-action@v1
-      with:
-        version: 2                         # default
-        verbose: false                     # default
-        arch: amd64                        # allowed values: amd64, arm64
-    - name: verify aws  profile
-      run: |
-        aws sts get-caller-identity
-        aws configure list
-    - name: install terraform
-      uses: hashicorp/setup-terraform@v2
-    - name: checkout repository
-      uses: actions/checkout@v3
-      with:
-        submodules: 'true'
-    - name: terraform init
-      run: terraform init
-      working-directory: terraform/environments/prod
-    - name: terraform plan
-      run: | 
-        terraform plan -out=plan.tmp
-        terraform show -no-color plan.tmp > ${GITHUB_WORKSPACE}/plan.out
-      working-directory: terraform/environments/prod
-      id: terraform-plan
-    - name: update PR with plan
-      uses: actions/github-script@v7
-      with:
-        script: |
-          const run_url = process.env.GITHUB_SERVER_URL + '/' + process.env.GITHUB_REPOSITORY + '/actions/runs/' + process.env.GITHUB_RUN_ID
-          const run_link = '<a href="' + run_url + '">here</a>'
-          const fs = require('fs')
-          const plan_file = fs.readFileSync('plan.out', 'utf8')
-          const plan = plan_file.length > 65000 ? plan_file.toString().substring(0, 65000) + " ..." : plan_file
-          const truncated_message = plan_file.length > 65000 ? "Output is too long and was truncated. Full output can be found " + run_link + "<br><br>" : "" 
+      - name: configure aws credentials
+        uses: aws-actions/configure-aws-credentials@v3.0.1
+        with:
+          # role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          # role-session-name: GitHub_to_AWS_via_FederatedOIDC
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+      - name: verify aws  profile
+        run: |
+          aws sts get-caller-identity
+          aws configure list
+      - name: install terraform
+        uses: hashicorp/setup-terraform@v3
+      - name: checkout repository
+        uses: actions/checkout@v5
+        with:
+          submodules: "true"
+      - name: terraform init
+        run: terraform init
+        working-directory: terraform/environments/prod
+      - name: terraform plan
+        run: |
+          terraform plan -out=plan.tmp
+          terraform show -no-color plan.tmp > ${GITHUB_WORKSPACE}/plan.out
+        working-directory: terraform/environments/prod
+        id: terraform-plan
+      - name: update PR with plan
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const run_url = process.env.GITHUB_SERVER_URL + '/' + process.env.GITHUB_REPOSITORY + '/actions/runs/' + process.env.GITHUB_RUN_ID
+            const run_link = '<a href="' + run_url + '">here</a>'
+            const fs = require('fs')
+            const plan_file = fs.readFileSync('plan.out', 'utf8')
+            const plan = plan_file.length > 65000 ? plan_file.toString().substring(0, 65000) + " ..." : plan_file
+            const truncated_message = plan_file.length > 65000 ? "Output is too long and was truncated. Full output can be found " + run_link + "<br><br>" : "" 
 
-          const output = `### Terraform plan 
-          <details><summary>Click to see the plan</summary>
+            const output = `### Terraform plan 
+            <details><summary>Click to see the plan</summary>
 
 
-          \`\`\`diff
+            \`\`\`diff
 
-          ${plan} 
+            ${plan} 
 
-          \`\`\`
-          </details>
-          ${truncated_message}`;
+            \`\`\`
+            </details>
+            ${truncated_message}`;
 
-          github.rest.issues.createComment({
-            issue_number: context.issue.number,
-            owner: context.repo.owner,
-            repo: context.repo.repo,
-            body: output 
-          })
-
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: output 
+            })
