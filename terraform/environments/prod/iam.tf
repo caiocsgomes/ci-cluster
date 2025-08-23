@@ -250,7 +250,7 @@ resource "aws_iam_policy" "load_balancer_controller_iam_policy" {
 }
 
 module "iam_eks_role_load_balancer_controller" {
-  source    = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks"
+  source    = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts"
   role_name = "aws-load-balancer-controller"
 
   role_policy_arns = {
@@ -288,7 +288,7 @@ resource "aws_iam_policy" "external_secrets_iam_policy" {
 }
 
 module "iam_eks_role_external_secrets_controller" {
-  source    = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks"
+  source    = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts"
   role_name = "external-secrets-controller"
 
   role_policy_arns = {
