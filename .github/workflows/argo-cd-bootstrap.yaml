@@ -21,13 +21,6 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ secrets.AWS_REGION }}
 
-      - id: install-aws-cli
-        uses: unfor19/install-aws-cli-action@v1
-        with:
-          version: 2 # default
-          verbose: false # default
-          arch: amd64 # allowed values: amd64, arm64
-
       - name: verify aws  profile
         run: |
           aws sts get-caller-identity
@@ -36,7 +29,7 @@ jobs:
       - name: install kubectl
         uses: azure/setup-kubectl@v1
         with:
-          version: 'v1.29.0'
+          version: "v1.33.0"
 
       - name: configure kubectl
         run: |
@@ -50,7 +43,7 @@ jobs:
         if: ${{ (steps.verify-argocd-namespace.outputs.ns != 'argocd') }}
         run: |
           kubectl create namespace argocd
-          kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/v2.9.3/manifests/install.yaml
+          kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/v3.1.6/manifests/install.yaml
 
       - name: checkout code
         uses: actions/checkout@v4
