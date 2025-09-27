@@ -39,7 +39,7 @@ jobs:
           submodules: "true"
       - name: terraform init
         run: terraform init
-        working-directory: terraform/environments/prod
+        working-directory: terraform
       - name: terraform apply
-        run: terraform apply -auto-approve
-        working-directory: terraform/environments/prod
+        run: terraform apply #-auto-approve
+        working-directory: terraform
