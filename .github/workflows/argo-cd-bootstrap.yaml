@@ -6,6 +6,10 @@ on:
     types:
       - completed
   workflow_dispatch:
+env:
+  EKS_CLUSTER_NAME: ${{ vars.EKS_CLUSTER_NAME }}
+  AWS_REGION: ${{ vars.AWS_REGION }}
+
 permissions: write-all
 jobs:
   argo_cd:
@@ -19,7 +23,7 @@ jobs:
           # role-session-name: GitHub_to_AWS_via_FederatedOIDC
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ secrets.AWS_REGION }}
+          aws-region: ${{ env.AWS_REGION }}
 
       - name: verify aws  profile
         run: |
@@ -33,7 +37,7 @@ jobs:
 
       - name: configure kubectl
         run: |
-          aws eks update-kubeconfig --name ${{ secrets.EKS_CLUSTER_NAME }} --region ${{ secrets.AWS_REGION }}
+          aws eks update-kubeconfig --name ${{ env.EKS_CLUSTER_NAME }} --region ${{ env.AWS_REGION }}
 
       - name: verify argocd namespace
         id: verify-argocd-namespace
