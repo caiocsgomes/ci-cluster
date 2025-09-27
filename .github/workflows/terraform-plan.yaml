@@ -30,6 +30,8 @@ jobs:
           aws configure list
       - name: install terraform
         uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: "1.13.3"
       - name: checkout repository
         uses: actions/checkout@v5
         with:
