@@ -36,7 +36,7 @@ jobs:
           submodules: "true"
       - name: terraform init
         run: terraform init
-        working-directory: terraform/environments/prod
+        working-directory: terraform
       - name: terraform plan
         run: |
           terraform plan -out=plan.tmp
