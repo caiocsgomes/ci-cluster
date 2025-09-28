@@ -24,6 +24,14 @@ module "eks" {
     caio = {
       principal_arn     = "arn:aws:iam::322620855520:user/caio"
       kubernetes_groups = ["cluster-admins"]
+      policy_associations = {
+        admin = {
+          policy_arn = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSAdminPolicy"
+          access_scope = {
+            type = "cluster"
+          }
+        }
+      }
     }
   }
 

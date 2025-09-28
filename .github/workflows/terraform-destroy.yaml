@@ -3,7 +3,7 @@ name: Terraform Destroy
 on:
   workflow_dispatch:
   schedule:
-    - cron: '0 0 * * *'
+    - cron: "0 0 * * *"
 
 permissions: write-all
 
@@ -12,42 +12,38 @@ jobs:
     runs-on: ubuntu-latest
     environment: prod
     steps:
-    - name: configure aws credentials
-      uses: aws-actions/configure-aws-credentials@v3.0.1
-      with:
-        # role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
-        # role-session-name: GitHub_to_AWS_via_FederatedOIDC
-        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        aws-region: ${{ secrets.AWS_REGION }}
+      - name: configure aws credentials
+        uses: aws-actions/configure-aws-credentials@v5.0.0
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          aws-region: ${{ vars.AWS_REGION }}
+      - name: install terraform
+        uses: hashicorp/setup-terraform@v2
 
-    - name: install terraform
-      uses: hashicorp/setup-terraform@v2
+      - name: checkout repository
+        uses: actions/checkout@v3
+        with:
+          submodules: "true"
 
-    - name: checkout repository
-      uses: actions/checkout@v3
-      with:
-        submodules: 'true'
+      - name: configure kubectl
+        continue-on-error: true
+        run: |
+          aws eks update-kubeconfig --name ${{ secrets.EKS_CLUSTER_NAME }} --region ${{ secrets.AWS_REGION }}
 
-    - name: configure kubectl
-      continue-on-error: true
-      run: |
-        aws eks update-kubeconfig --name ${{ secrets.EKS_CLUSTER_NAME }} --region ${{ secrets.AWS_REGION }}
+      - name: checkout code
+        uses: actions/checkout@v4
 
-    - name: checkout code
-      uses: actions/checkout@v4
+      - name: delete resources created not managed by terraform
+        continue-on-error: true
+        run: |
+          kubectl delete -f kubernetes/ingress # deletes ALB created by aws-load-balancer-controller
+          kubectl delete nodeclaims --all # deletes nodes created by karpenter
+          sleep 60
 
-    - name: delete resources created not managed by terraform
-      continue-on-error: true
-      run: |
-        kubectl delete -f kubernetes/ingress # deletes ALB created by aws-load-balancer-controller
-        kubectl delete nodeclaims --all # deletes nodes created by karpenter
-        sleep 60
+      - name: terraform init
+        run: terraform init
+        working-directory: terraform/environments/prod
 
-    - name: terraform init
-      run: terraform init
-      working-directory: terraform/environments/prod
-
-    - name: terraform destroy
-      run: terraform destroy -auto-approve -lock=false
-      working-directory: terraform/environments/prod
+      - name: terraform destroy
+        run: terraform destroy -auto-approve -lock=false
+        working-directory: terraform/environments/prod
