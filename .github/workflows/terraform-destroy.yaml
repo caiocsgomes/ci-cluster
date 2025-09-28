@@ -42,8 +42,8 @@ jobs:
 
       - name: terraform init
         run: terraform init
-        working-directory: terraform/environments/prod
+        working-directory: terraform
 
       - name: terraform destroy
         run: terraform destroy -auto-approve -lock=false
-        working-directory: terraform/environments/prod
+        working-directory: terraform
