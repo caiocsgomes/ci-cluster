@@ -22,7 +22,8 @@ module "eks" {
 
   access_entries = {
     caio = {
-      principal_arn = "arn:aws:iam::322620855520:user/caio"
+      principal_arn     = "arn:aws:iam::322620855520:user/caio"
+      kubernetes_groups = ["cluster-admins"]
     }
   }
 
