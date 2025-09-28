@@ -20,6 +20,11 @@ module "eks" {
   endpoint_public_access                   = true
   enable_cluster_creator_admin_permissions = true
 
+  access_entries = {
+    caio = {
+      principal_arn = "arn:aws:iam::322620855520:user/caio"
+    }
+  }
 
   vpc_id     = module.vpc.vpc_id
   subnet_ids = module.vpc.private_subnets
