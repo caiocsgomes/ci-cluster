@@ -6,24 +6,17 @@ on:
     types:
       - completed
   workflow_dispatch:
-env:
-  EKS_CLUSTER_NAME: ${{ vars.EKS_CLUSTER_NAME }}
-  AWS_REGION: ${{ vars.AWS_REGION }}
 
 permissions: write-all
 jobs:
   argo_cd:
     runs-on: ubuntu-latest
-    environment: prod
     steps:
       - name: configure aws credentials
-        uses: aws-actions/configure-aws-credentials@v3.0.1
+        uses: aws-actions/configure-aws-credentials@v5.0.0
         with:
-          # role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
-          # role-session-name: GitHub_to_AWS_via_FederatedOIDC
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ env.AWS_REGION }}
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          aws-region: ${{ vars.AWS_REGION }}
 
       - name: verify aws  profile
         run: |
@@ -31,13 +24,13 @@ jobs:
           aws configure list
 
       - name: install kubectl
-        uses: azure/setup-kubectl@v1
+        uses: azure/setup-kubectl@v4
         with:
           version: "v1.33.0"
 
       - name: configure kubectl
         run: |
-          aws eks update-kubeconfig --name ${{ env.EKS_CLUSTER_NAME }} --region ${{ env.AWS_REGION }}
+          aws eks update-kubeconfig --name ${{ vars.EKS_CLUSTER_NAME }} --region ${{ vars.AWS_REGION }}
 
       - name: verify argocd namespace
         id: verify-argocd-namespace
@@ -50,7 +43,7 @@ jobs:
           kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/v3.1.6/manifests/install.yaml
 
       - name: checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: install cluster app of apps
         run: kubectl apply -f kubernetes/app-of-apps.yaml
