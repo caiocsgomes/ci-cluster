@@ -9,7 +9,7 @@ aws-load-balancer-controller:
 
   image:
     repository: public.ecr.aws/eks/aws-load-balancer-controller
-    tag: v2.8.1
+    tag: v2.13.4
     pullPolicy: IfNotPresent
 
   runtimeClassName: ""
@@ -32,14 +32,15 @@ aws-load-balancer-controller:
     # Specifies whether a service account should be created
     create: true
     # Annotations to add to the service account
-    annotations:
-      eks.amazonaws.com/role-arn: arn:aws:iam::322620855520:role/aws-load-balancer-controller
+    annotations: {}
     # The name of the service account to use.
     # If not set and create is true, a name is generated using the fullname template
     name: aws-load-balancer-controller
     # Automount API credentials for a Service Account.
     automountServiceAccountToken: true
     # List of image pull secrets to add to the Service Account.
+    imagePullSecrets:
+      # - name: docker
 
   rbac:
     # Specifies whether rbac resources should be created
@@ -91,7 +92,7 @@ aws-load-balancer-controller:
   # nodes, and other user-defined topology domains.
   #
   # more details here: https://kubernetes.io/docs/concepts/workloads/pods/pod-topology-spread-constraints/
-  topologySpreadConstraints: {}
+  topologySpreadConstraints: []
 
   updateStrategy: {}
     # type: RollingUpdate
@@ -115,8 +116,14 @@ aws-load-balancer-controller:
   # Enable cert-manager
   enableCertManager: false
 
+  # Overrideable variables when enableCertManager is set to true
+  certManager:
+    duration:
+    renewBefore:
+    revisionHistoryLimit:
+
   # The name of the Kubernetes cluster. A non-empty value is required
-  clusterName: arn:aws:eks:us-east-1:322620855520:cluster/ci-cluster
+  clusterName: ci-cluster
 
   # cluster contains configurations specific to the kubernetes cluster
   cluster:
@@ -161,6 +168,10 @@ aws-load-balancer-controller:
   # The VPC ID for the Kubernetes cluster. Set this manually when your pods are unable to use the metadata service to determine this automatically
   vpcId:
 
+  # This is alternative to vpcId. Set this when your pods are unable to use the metadata service to determine VPC automatically.
+  vpcTags: {}
+  # Name: tagValue
+
   # Custom AWS API Endpoints (serviceID1=URL1,serviceID2=URL2)
   awsApiEndpoints:
 
@@ -201,6 +212,10 @@ aws-load-balancer-controller:
   # The address the metric endpoint binds to. (default ":8080")
   metricsBindAddr: ""
 
+  webhookConfig:
+    # disableIngressValidation disables the validation of resources of kind Ingress, false by default
+    disableIngressValidation:
+
   # The TCP port the Webhook server binds to. (default 9443)
   webhookBindPort:
 
@@ -228,6 +243,9 @@ aws-load-balancer-controller:
 
   # Maximum duration of exponential backoff for targetGroupBinding reconcile failures
   targetgroupbindingMaxExponentialBackoffDelay:
+
+  # Interval at which the controller monitors the state of load balancer after creation for stabilization
+  lbStabilizationMonitorInterval:
 
   # Period at which the controller forces the repopulation of its local object stores. (default 10h0m0s)
   syncPeriod:
@@ -282,10 +300,9 @@ aws-load-balancer-controller:
   # envSecretName: aws-secret
 
   # Use envFrom to set environment variables from a Secret or ConfigMap
-  envFrom: 
-    # valueFrom:
-    #   - secretKeyRef:
-    #       name: aws-load-balancer-controller
+  # envFrom:
+  #   - secretRef:
+  #       name: my-secret
 
   # Specifies if aws-load-balancer-controller should be started in hostNetwork mode.
   # This is required if using a custom CNI where the managed control plane nodes are unable to initiate
@@ -336,6 +353,9 @@ aws-load-balancer-controller:
   # enableBackendSecurityGroup enables shared security group for backend traffic (default true)
   enableBackendSecurityGroup:
 
+  # enableManageBackendSecurityGroupRules enables controller manages security group rules (default false)
+  enableManageBackendSecurityGroupRules:
+
   # backendSecurityGroup specifies backend security group id (default controller auto create backend security group)
   backendSecurityGroup:
 
@@ -355,6 +375,8 @@ aws-load-balancer-controller:
     # SubnetsClusterTagCheck: true
     # NLBHealthCheckAdvancedConfig: true
     # ALBSingleSubnet: false
+    # LBCapacityReservation: true
+    # EnhancedDefaultBehavior: false
 
   certDiscovery:
     allowedCertificateAuthorityARNs: "" # empty means all CAs are in scope
@@ -416,14 +438,18 @@ aws-load-balancer-controller:
         # key: value
     # which operations trigger the webhook
     operations:
-    - CREATE
-      # - UPDATE
+      - CREATE
+        # - UPDATE
+
+  # podMutatorWebhookConfig contains configurations specific to the service mutator webhook
+  podMutatorWebhookConfig:
+    # whether or not to fail the pod creation if the webhook fails
+    failurePolicy: Ignore
 
   # serviceTargetENISGTags specifies AWS tags, in addition to the cluster tags, for finding the target ENI SG to which to add inbound rules from NLBs.
   serviceTargetENISGTags:
 
   # Specifies the class of load balancer to use for services. This affects how services are provisioned if type LoadBalancer is used (default service.k8s.aws/nlb)
   loadBalancerClass:
-
   # creator will disable helm default labels, so you can only add yours
   # creator: "me"
