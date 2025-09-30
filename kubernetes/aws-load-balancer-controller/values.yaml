@@ -169,8 +169,8 @@ aws-load-balancer-controller:
   vpcId:
 
   # This is alternative to vpcId. Set this when your pods are unable to use the metadata service to determine VPC automatically.
-  vpcTags: {}
-  # Name: tagValue
+  vpcTags:
+    project: ci-cluster
 
   # Custom AWS API Endpoints (serviceID1=URL1,serviceID2=URL2)
   awsApiEndpoints:
