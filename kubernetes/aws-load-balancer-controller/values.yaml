@@ -163,7 +163,7 @@ aws-load-balancer-controller:
   createIngressClassResource: true
 
   # The AWS region for the kubernetes cluster. Set to use KIAM or kube2iam for example.
-  region:
+  region: us-east-1
 
   # The VPC ID for the Kubernetes cluster. Set this manually when your pods are unable to use the metadata service to determine this automatically
   vpcId:
