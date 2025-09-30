@@ -28,7 +28,7 @@ jobs:
       - name: configure kubectl
         continue-on-error: true
         run: |
-          aws eks update-kubeconfig --name ${{ secrets.EKS_CLUSTER_NAME }} --region ${{ secrets.AWS_REGION }}
+          aws eks update-kubeconfig --name ${{ vars.EKS_CLUSTER_NAME }} --region ${{ vars.AWS_REGION }}
 
       - name: checkout code
         uses: actions/checkout@v4
