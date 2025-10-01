@@ -18,6 +18,7 @@ spec:
     helm:
       valueFiles:
         - values.yaml
+      ignoreMissingValueFiles: true
   destination:
     server: {{ $.Values.destination.server }}
     namespace: {{ $chart.name }}
