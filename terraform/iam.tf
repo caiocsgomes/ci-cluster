@@ -37,7 +37,7 @@ resource "aws_iam_role_policy_attachment" "alb_controller_attach" {
 resource "aws_eks_pod_identity_association" "alb_controller" {
   depends_on      = [module.eks]
   cluster_name    = var.project_name
-  namespace       = "kube-system"
+  namespace       = "aws-load-balancer-controller"
   service_account = "aws-load-balancer-controller"
   role_arn        = aws_iam_role.alb_controller.arn
 }
