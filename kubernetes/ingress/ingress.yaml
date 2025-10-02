@@ -9,10 +9,10 @@ metadata:
     alb.ingress.kubernetes.io/target-type: ip
     alb.ingress.kubernetes.io/group.name: ci-cluster-ingress
     alb.ingress.kubernetes.io/healthcheck-protocol: HTTPS
-    alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:us-east-1:322620855520:certificate/ec9dfe04-5253-4bd6-a594-c88e69053ed2
+    alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:us-east-1:322620855520:certificate/96a2474d-6691-425e-8f9f-584262e4c12c
     alb.ingress.kubernetes.io/listen-ports: '[{"HTTPS":443}]'
     alb.ingress.kubernetes.io/backend-protocol: HTTPS
-    alb.ingress.kubernetes.io/ssl-redirect: '443'
+    alb.ingress.kubernetes.io/ssl-redirect: "443"
     alb.ingress.kubernetes.io/conditions.argogrpc: |
       [{"field":"http-header","httpHeaderConfig":{"httpHeaderName": "Content-Type", "values":["application/grpc"]}}]
 spec:
@@ -42,10 +42,10 @@ metadata:
     alb.ingress.kubernetes.io/target-type: ip
     alb.ingress.kubernetes.io/group.name: ci-cluster-ingress
     alb.ingress.kubernetes.io/healthcheck-protocol: HTTP
-    alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:us-east-1:322620855520:certificate/ec9dfe04-5253-4bd6-a594-c88e69053ed2
+    alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:us-east-1:322620855520:certificate/96a2474d-6691-425e-8f9f-584262e4c12c
     alb.ingress.kubernetes.io/listen-ports: '[{"HTTPS":443}]'
     alb.ingress.kubernetes.io/backend-protocol: HTTP
-    alb.ingress.kubernetes.io/ssl-redirect: '443'
+    alb.ingress.kubernetes.io/ssl-redirect: "443"
     alb.ingress.kubernetes.io/success-codes: 200-302
 spec:
   ingressClassName: alb
@@ -74,10 +74,10 @@ metadata:
     alb.ingress.kubernetes.io/target-type: ip
     alb.ingress.kubernetes.io/group.name: ci-cluster-ingress
     alb.ingress.kubernetes.io/healthcheck-protocol: HTTP
-    alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:us-east-1:322620855520:certificate/ec9dfe04-5253-4bd6-a594-c88e69053ed2
+    alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:us-east-1:322620855520:certificate/96a2474d-6691-425e-8f9f-584262e4c12c
     alb.ingress.kubernetes.io/listen-ports: '[{"HTTPS":443}]'
     alb.ingress.kubernetes.io/backend-protocol: HTTP
-    alb.ingress.kubernetes.io/ssl-redirect: '443'
+    alb.ingress.kubernetes.io/ssl-redirect: "443"
     alb.ingress.kubernetes.io/success-codes: 200-302
 spec:
   ingressClassName: alb
@@ -106,10 +106,10 @@ metadata:
     alb.ingress.kubernetes.io/target-type: ip
     alb.ingress.kubernetes.io/group.name: ci-cluster-ingress
     alb.ingress.kubernetes.io/healthcheck-protocol: HTTP
-    alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:us-east-1:322620855520:certificate/ec9dfe04-5253-4bd6-a594-c88e69053ed2
+    alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:us-east-1:322620855520:certificate/96a2474d-6691-425e-8f9f-584262e4c12c
     alb.ingress.kubernetes.io/listen-ports: '[{"HTTPS":443}]'
     alb.ingress.kubernetes.io/backend-protocol: HTTP
-    alb.ingress.kubernetes.io/ssl-redirect: '443'
+    alb.ingress.kubernetes.io/ssl-redirect: "443"
     alb.ingress.kubernetes.io/success-codes: 200-302
 spec:
   ingressClassName: alb
