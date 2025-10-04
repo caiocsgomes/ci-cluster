@@ -80,7 +80,7 @@ jobs:
         run: |
           ## Get the ALB ARN
           alb_arn=$(aws elbv2 describe-load-balancers --region ${{ secrets.AWS_REGION }} | jq -r '.LoadBalancers[].LoadBalancerArn' | xargs -I {} aws --region ${{ secrets.AWS_REGION }} elbv2 describe-tags --resource-arns {} --query "TagDescriptions[?Tags[?Key=='ingress.k8s.aws/stack' &&Value=='ci-cluster-ingress']].ResourceArn" --output text)
-          for i in {1..10}; do
+          for i in {1..30}; do
             if [ -z "$alb_arn" ]; then
               echo "ALB not found, waiting 10 seconds"
               sleep 30
