@@ -66,10 +66,10 @@ module "eks" {
           EOT
         }
       ]
-    }
-    metadata_options = {
-      http_put_response_hop_limit = 2
-      http_tokens                 = "required"
+      metadata_options = {
+        http_put_response_hop_limit = 2
+        http_tokens                 = "required"
+      }
     }
   }
 
