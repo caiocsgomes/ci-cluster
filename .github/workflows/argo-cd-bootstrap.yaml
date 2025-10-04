@@ -101,4 +101,10 @@ jobs:
 
       - name: set argocd admin password
         run: |
-          kubectl -n argocd patch secret argocd-secret -p '{"stringData": {"admin.password": "${{ secrets.ARGOCD_ADMIN_PASSWORD }}"}}'
+          sudo apt-get update && sudo apt-get install -y apache2-utils
+          HASHED_PASSWORD=$(htpasswd -nbB 10 "" "${{ secrets.ARGOCD_ADMIN_PASSWORD }}" | tr -d '\n' | sed -e 's/^\(.*\):/\1/')
+          kubectl -n argocd patch secret argocd-secret -p "{\"stringData\": {\"admin.password\": \"$HASHED_PASSWORD\", \"admin.passwordMtime\": \"$(date +%FT%T%Z)\"}}"
+
+      - name: restart argocd server
+        run: |
+          kubectl -n argocd delete pods -l app.kubernetes.io/name=argocd-server
