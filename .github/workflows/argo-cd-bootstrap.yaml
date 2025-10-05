@@ -101,8 +101,9 @@ jobs:
 
       - name: set argocd admin password
         run: |
-          sudo apt-get update && sudo apt-get install -y apache2-utils
-          HASHED_PASSWORD=$(htpasswd -nbB 10 "" "${{ secrets.ARGOCD_ADMIN_PASSWORD }}" | tr -d '\n' | sed -e 's/^\(.*\):/\1/')
+          sudo apt-get update && sudo apt-get install -y argocd
+          ## https://github.com/argoproj/argo-cd/blob/master/docs/faq.md#i-forgot-the-admin-password-how-do-i-reset-it
+          HASHED_PASSWORD=$(argocd account bcrypt --password "${{ secrets.ARGOCD_ADMIN_PASSWORD }}"))
           kubectl -n argocd patch secret argocd-secret -p "{\"stringData\": {\"admin.password\": \"$HASHED_PASSWORD\", \"admin.passwordMtime\": \"$(date +%FT%T%Z)\"}}"
 
       - name: restart argocd server
